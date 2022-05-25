@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "nuxAs0aksugx6QNjDWrqpJcB1CWwTIaQABFP8wb5WdKkwYtoRighLx4JGcVdpaqBgPL8pHf5e+4eDuxaq9lGgg==",
+  "dgSpecHash": "b3U/Ys+wIACKiGxojjZmaeGwoXswiOkYh8Zwng/QJyBHvTzP3CVvZILbkMIUQSbihnhRDoU8kI1BL2Ywbq+m/g==",
   "success": true,
   "projectFilePath": "C:\\Users\\iamso\\RiderProjects\\EscrowService\\EscrowService\\EscrowService.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,7 @@
     "C:\\Users\\iamso\\.nuget\\packages\\k4os.compression.lz4\\1.2.6\\k4os.compression.lz4.1.2.6.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\k4os.compression.lz4.streams\\1.2.6\\k4os.compression.lz4.streams.1.2.6.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\k4os.hash.xxhash\\1.0.6\\k4os.hash.xxhash.1.0.6.nupkg.sha512",
+    "C:\\Users\\iamso\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\5.0.10\\microsoft.aspnetcore.authentication.jwtbearer.5.0.10.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\5.0.10\\microsoft.aspnetcore.jsonpatch.5.0.10.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\5.0.10\\microsoft.aspnetcore.mvc.newtonsoftjson.5.0.10.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
@@ -33,6 +34,8 @@
     "C:\\Users\\iamso\\.nuget\\packages\\microsoft.identitymodel.abstractions\\6.18.0\\microsoft.identitymodel.abstractions.6.18.0.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\6.18.0\\microsoft.identitymodel.jsonwebtokens.6.18.0.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\microsoft.identitymodel.logging\\6.18.0\\microsoft.identitymodel.logging.6.18.0.nupkg.sha512",
+    "C:\\Users\\iamso\\.nuget\\packages\\microsoft.identitymodel.protocols\\6.7.1\\microsoft.identitymodel.protocols.6.7.1.nupkg.sha512",
+    "C:\\Users\\iamso\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\6.7.1\\microsoft.identitymodel.protocols.openidconnect.6.7.1.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.18.0\\microsoft.identitymodel.tokens.6.18.0.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",

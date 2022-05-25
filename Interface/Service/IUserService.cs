@@ -7,6 +7,6 @@ namespace EscrowService.Interface.Service
     {
         Task<UserDto> GetUser(int userId);
         Task<UserDto> GetUserByEmail(string email);
-        Task<BaseResponse> Login(UserLoginRequest _request);
+        Task<UserResponseModel> Login(UserLoginRequest _request);
     }
 }

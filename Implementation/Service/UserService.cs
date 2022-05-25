@@ -49,20 +49,25 @@ namespace EscrowService.Implementation.Service
         }
         
 
-        public async Task<BaseResponse> Login(UserLoginRequest _request)
+        public async Task<UserResponseModel> Login(UserLoginRequest _request)
         {
             var getEmail = await _userRepo.GetUserByEmail(_request.Email);
             if (getEmail == null || getEmail.Password != _request.Password)
             {
-                return new BaseResponse()
+                return new UserResponseModel()
                 {
                     IsSuccess = false,
                     Message = "Invalid Email or Password",
+                    
                 };
             }
 
-            return new BaseResponse()
+            return new UserResponseModel()
             {
+                Data = new UserDto()
+                {
+                    Email = _request.Email,
+                },
                 Message = "Login Successfully",
                 IsSuccess = true,
             };

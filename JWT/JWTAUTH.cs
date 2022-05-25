@@ -6,6 +6,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using EscrowService.DTO;
 using EscrowService.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -16,45 +17,56 @@ namespace EscrowService.JWT
 {
     public class JWTAUTH:IJWTAUTH
     {
-        private readonly IHttpContextAccessor _context;
-        private readonly IConfiguration _configuration;
-        private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly string _key;
 
-        public JWTAUTH(IHttpContextAccessor context, IConfiguration configuration, IPasswordHasher<User> passwordHasher)
+        public JWTAUTH(string key)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _configuration = configuration ?? throw new ArgumentException(nameof(configuration));
-            _passwordHasher = passwordHasher ?? throw new ArgumentException(nameof(passwordHasher));
+            _key = key;
         }
 
-        public string GetUserIdentity()
-        {
-            return _context.HttpContext?.User?.FindFirst(JwtRegisteredClaimNames.Email)?.Value;
-        }
+        // public string GetUserIdentity()
+        // {
+        //     return _context.HttpContext?.User?.FindFirst(JwtRegisteredClaimNames.Email)?.Value;
+        // }
 
-        public string GenerateToken(User user, IEnumerable<string> roles)
+        public string GenerateToken(UserDto user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JwtTokenSettings:TokenKey")));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
-            IList<Claim> claims = new List<Claim>
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var tokenKey = Encoding.ASCII.GetBytes(_key);
+            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
-            claims.Add(new Claim(ClaimTypes.Role, user.Role.ToString()));
-            var token = new JwtSecurityToken(_configuration.GetValue<string>("JwtTokenSettings:TokenIssuer"),
-                _configuration.GetValue<string>("JwtTokenSettings:TokenIssuer"),
-                claims,
-                DateTime.UtcNow,
-                expires: DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration.GetValue<string>("JwtTokenSettings:TokenExpiryPeriod"))),
-                signingCredentials: credentials);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                IssuedAt = DateTime.Now,
+                Expires = DateTime.Now.AddHours(2),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(tokenKey),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
         }
         public JwtSecurityToken GetClaims(string token)
         {
-            throw new System.NotImplementedException();
+            if (!string.IsNullOrEmpty(token))
+            {
+                
+                var handler = new JwtSecurityTokenHandler();
+
+                var decodedToken = handler.ReadToken(token) as JwtSecurityToken;
+
+                return decodedToken;
+            }
+            return null;
         }
 
         public string GetClaimValue(string type)
@@ -66,12 +78,7 @@ namespace EscrowService.JWT
         {
             throw new System.NotImplementedException();
         }
-
-        public string GetPasswordHash(string password, string salt = null)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         public Task<User> FindByNameAsync(string userName)
         {
             throw new System.NotImplementedException();
