@@ -35,7 +35,7 @@ namespace EscrowService
             services.AddScoped<ITraderService, TraderService>();
             services.AddScoped<ITraderRepo, TraderRepo>();
             services.AddScoped<IUserRepo, UserRepo>();
-            // services.AddScoped<IUser, UserRepo>();
+            services.AddScoped<IUserService, UserService>();
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationContext>(options => options.UseMySQL(connectionString));
