@@ -42,6 +42,8 @@ namespace EscrowService
             services.AddScoped<ITraderRepo, TraderRepo>();
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPaymentMethodRepo, PaymentMrthodRepo>();
+            services.AddScoped<IPaymentMethodService, PaymentMethodService>();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
