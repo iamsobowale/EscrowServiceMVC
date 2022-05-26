@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using EscrowService.DTO;
 using EscrowService.Interface.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EscrowService.Controllers

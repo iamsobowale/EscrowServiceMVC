@@ -23,7 +23,7 @@ namespace EscrowService.Controllers
         public async Task<IActionResult> Login([FromBody]UserLoginRequest _request)
         {
             var login = await _userService.Login(_request);
-            if (login==null)
+            if (login.IsSuccess==false)
             {
                 return BadRequest(login);
             }
@@ -35,5 +35,6 @@ namespace EscrowService.Controllers
             };
             return Ok(response);
         }
+        
     }
 }

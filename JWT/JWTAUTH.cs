@@ -31,7 +31,7 @@ namespace EscrowService.JWT
 
         public string GenerateToken(UserDto user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler(); 
 
             var tokenKey = Encoding.ASCII.GetBytes(_key);
             var claims = new List<Claim>

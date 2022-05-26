@@ -70,11 +70,12 @@ namespace EscrowService.Implementation.Service
         public async Task<bool> DeletePaymentMethod(int id)
         {
             var getpayment = await _paymentMethodRepo.GetPaymentMethod(id);
-            var delete = await _paymentMethodRepo.DeletePaymentMethod(getpayment);
-            if (delete==null)
+            if (getpayment==null)
             {
                 return false;
             }
+            getpayment.IsDeleted = true;
+            _paymentMethodRepo.UpdatePaymentMethod(getpayment);
             return true;
         }
 

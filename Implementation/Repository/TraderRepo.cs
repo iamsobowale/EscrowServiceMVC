@@ -47,7 +47,7 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<IList<Trader>> GetAllTraderAsync(Expression<Func<Trader, bool>> expression)
         {
-            return await _context.Traders.ToListAsync();
+            return await _context.Traders.Where(c => c.IsDeleted == false).ToListAsync();
         }
         
         public async Task<Trader> GetTraderByEmailAsync(string email)
@@ -58,7 +58,7 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<Trader> GetTraderByUserIdAsync(int userId)
         {
-           return await _context.Traders.FirstOrDefaultAsync(a=>a.UserId == userId);
+           return await _context.Traders.FirstOrDefaultAsync(a=>a.UserId == userId && a.IsDeleted == false);
             
         }
         

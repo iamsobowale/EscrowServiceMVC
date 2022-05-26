@@ -40,17 +40,17 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<PaymentMethod> GetPaymentMethod(int id)
         {
-             return await _context.PaymentMethods.SingleOrDefaultAsync(c => c.Id == id);
+             return await _context.PaymentMethods.SingleOrDefaultAsync(c => c.Id == id && c.IsDeleted == false);
         }
 
         public async Task<List<PaymentMethod>> GetAllPaymentMethod()
         {
-            return await _context.PaymentMethods.ToListAsync();
+            return await _context.PaymentMethods.Where(c => c.IsDeleted==false).ToListAsync();
         }
 
         public async Task<PaymentMethod> GetPaymentMethodByName(string name)
         {
-            return await _context.PaymentMethods.Where(c => c.Name == name).SingleOrDefaultAsync();
+            return await _context.PaymentMethods.Where(c => c.Name == name && c.IsDeleted == false).SingleOrDefaultAsync();
         }
     }
 }

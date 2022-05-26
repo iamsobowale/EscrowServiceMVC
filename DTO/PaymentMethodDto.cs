@@ -9,9 +9,10 @@ namespace EscrowService.DTO
     }
     public class CreatePaymentMethodRequestModel
     {
-        public string PaymentMethodName { get; set; }
-        public string PaymentMethodDescription { get; set; }
-        public int PaymentMethodId { get; set; }
+        public string? PaymentMethodName { get; set; }
+        public string? PaymentMethodDescription { get; set; }
+        
+        
     }
     public class UpdatePaymentMethodRequestModel
     {
