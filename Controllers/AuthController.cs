@@ -25,7 +25,7 @@ namespace EscrowService.Controllers
             var login = await _userService.Login(_request);
             if (login==null)
             {
-                return BadRequest("Invalid Username or Password");
+                return BadRequest(login);
             }
 
             var response = new UserLoginResponse()
