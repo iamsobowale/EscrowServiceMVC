@@ -5,12 +5,12 @@ namespace EscrowService.Interface.Service
 {
     public interface IAdminService
     {
-        Task<BaseResponse> CreateAdminAsync(CreateTraderRequestModel requestModel);
-        Task<BaseResponse> UpdateTraderAsync(TraderUpdateRequestModel requestModel, int id);
-        Task<bool> DeleteTraderAsync(int id);
-        Task<TradersResponseModel> GetTraderAsync(int id);
-        Task<TraderResponsesModel> GetAllTradersAsync();
-        Task<TradersResponseModel> GetTraderByEmailAsync(string email);
-        Task<TradersResponseModel> GetTraderByUserIdAsync(int userId);
+        Task<BaseResponse> CreateAdminAsync(CreateAdminRequestModel requestModel);
+        Task<BaseResponse> UpdateTraderAsync(UpdateAdminRequestModel requestModel, int id);
+        Task<bool> DeleteAdminAsync(int id);
+        Task<AdminResponseModel> GetAdminAsync(int id);
+        Task<AdminResponsesModel> GetAllTradersAsync();
+        Task<AdminResponseModel> GetTraderByEmailAsync(string email);
+        Task<AdminResponseModel> GetTraderByUserIdAsync(int userId);
     }
 }

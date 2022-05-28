@@ -22,6 +22,7 @@ namespace EscrowService.Controllers
             return Ok(result);
         }
         [HttpGet("GetTrader")]
+        [Authorize(Roles = "Trader")]
         public async Task<IActionResult> GetTrader([FromQuery]int id)
         {
             var result = await _traderService.GetTraderAsync(id);

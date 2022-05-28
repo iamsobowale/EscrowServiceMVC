@@ -23,8 +23,10 @@ namespace EscrowService.DTO
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
+        public string Gender { get; set; }
         public string State { get; set; }
         public DateTime Dob { get; set; }
+        public string Password { get; set; }
     }
     public class UpdateAdminRequestModel
     {
@@ -36,8 +38,9 @@ namespace EscrowService.DTO
         public string City { get; set; }
         public string State { get; set; }
         public DateTime Dob { get; set; }
+        public string Password { get; set; }
     }
-    public class TraderResponseModel:BaseResponse
+    public class AdminResponseModel:BaseResponse
     {
         public AdminDto Admin { get; set; }
     }

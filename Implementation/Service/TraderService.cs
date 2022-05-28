@@ -36,7 +36,6 @@ namespace EscrowService.Implementation.Service
             {
                 Password = requestModel.Password,
                 Email = requestModel.Email,
-                CreatedDate = new DateTime(),
                 Role = Role.Trader
             };
             var response = await _userRepo.CreateUser(user);
@@ -57,7 +56,6 @@ namespace EscrowService.Implementation.Service
                 City = requestModel.City,
                 Email = requestModel.Email,
                 AddressLine1 = requestModel.Address,
-                CreatedDate = new DateTime(),
                 State = requestModel.State,
                 FirstName = requestModel.FirstName,
                 Dob = requestModel.Dob,
@@ -65,6 +63,7 @@ namespace EscrowService.Implementation.Service
                 AccountNumber = requestModel.AccountNumber,
                 BankName = requestModel.BankName,
                 LastName = requestModel.LastName,
+                Role = Role.Trader
             };
             var  create = await _traderRepo.CreateTraderAsync(trader);
             if (create==null)
