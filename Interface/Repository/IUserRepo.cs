@@ -9,5 +9,6 @@ namespace EscrowService.Interface.Repository
         Task<User> GetUser(int userId);
         Task<User> GetUserByEmail(string email);
         Task<bool> EmailExistsAsync(string email);
+        Task<User> UpdateUser(User user);
     }
 }

@@ -56,6 +56,12 @@ namespace EscrowService.Implementation.Repository
           return getEmail;
         }
 
+        public async Task<IList<TradersTransaction>> GetAllTradersInTransaction(string referenceNumber)
+        {
+            var getTr= await _context.TradersTransactions.Include(v=>v.Trader).Where(c=>c.Transaction.ReferenceNumber==referenceNumber).ToListAsync();
+            return getTr;
+        }
+
         public async Task<Trader> GetTraderByUserIdAsync(int userId)
         {
            return await _context.Traders.FirstOrDefaultAsync(a=>a.UserId == userId && a.IsDeleted == false);

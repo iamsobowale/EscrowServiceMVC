@@ -52,7 +52,7 @@ namespace EscrowService.Implementation.Service
             {
                 UserId = user.Id,
                 User = user,
-                Phone = requestModel.Phone,
+                Phone = requestModel.PhoneNumber,
                 City = requestModel.City,
                 Email = requestModel.Email,
                 AddressLine1 = requestModel.Address,
@@ -63,7 +63,7 @@ namespace EscrowService.Implementation.Service
                 AccountNumber = requestModel.AccountNumber,
                 BankName = requestModel.BankName,
                 LastName = requestModel.LastName,
-                Role = Role.Trader
+                Gender = requestModel.Gender
             };
             var  create = await _traderRepo.CreateTraderAsync(trader);
             if (create==null)
@@ -102,6 +102,7 @@ namespace EscrowService.Implementation.Service
             }
             user.Email = requestModel.Email;
             user.Password = requestModel.Password;
+            await _userRepo.UpdateUser(user);
             trader.FirstName = requestModel.FirstName;
             trader.LastName = requestModel.LastName;
             trader.Phone = requestModel.Phone;
@@ -232,6 +233,31 @@ namespace EscrowService.Implementation.Service
                     Dob = getbyEmail.Dob,
                     Gender = getbyEmail.Gender
                 },
+                Message = "Success",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TraderResponsesModel> GetAllTradersInTransaction(string referenceNumber)
+        {
+            var getAllTradersInTransaction = await _traderRepo.GetAllTradersInTransaction(referenceNumber);
+            return new TraderResponsesModel()
+            {
+                Traders = getAllTradersInTransaction.Select(y => new TradersDto()
+                {
+                    Gender = y.Trader.Gender,
+                    FirstName = y.Trader.FirstName,
+                    LastName = y.Trader.LastName,
+                    PhoneNumber = y.Trader.Phone,
+                    City = y.Trader.City,
+                    Email = y.Trader.Email,
+                    Address = y.Trader.AddressLine1,
+                    State = y.Trader.State,
+                    AccountName = y.Trader.AccountName,
+                    AccountNumber = y.Trader.AccountNumber,
+                    BankName = y.Trader.BankName,
+                    Dob = y.Trader.Dob,
+                }).ToList(),
                 Message = "Success",
                 IsSuccess = true
             };

@@ -14,6 +14,7 @@ namespace EscrowService.Interface.Repository
         Task<Trader> GetTraderAsync(int id);
         Task<IList<Trader>> GetAllTraderAsync(Expression<Func<Trader,bool>> expression);
         Task<Trader> GetTraderByEmailAsync(string email);
+        public Task<IList<TradersTransaction>> GetAllTradersInTransaction(string referenceNumber);
         Task<Trader> GetTraderByUserIdAsync(int userId);
         
     }

@@ -38,5 +38,12 @@ namespace EscrowService.Implementation.Repository
         {
            return await _context.Traders.AnyAsync(c=>c.Email == email);
         }
+
+        public async Task<User> UpdateUser(User user)
+        {
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
     }
 }

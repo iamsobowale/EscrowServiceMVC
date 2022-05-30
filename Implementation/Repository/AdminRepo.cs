@@ -10,6 +10,12 @@ namespace EscrowService.Implementation.Repository
     public class AdminRepo:IAdminRepository
     {
         private readonly ApplicationContext _context;
+
+        public AdminRepo(ApplicationContext context)
+        {
+            _context = context;
+        }
+
         public async Task<Admin> CreateAdminAsync(Admin admin)
         {
             await _context.Admins.AddAsync(admin);

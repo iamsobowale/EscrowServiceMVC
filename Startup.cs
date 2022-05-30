@@ -9,6 +9,7 @@ using EscrowService.Implementation.Service;
 using EscrowService.Interface.Repository;
 using EscrowService.Interface.Service;
 using EscrowService.JWT;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,10 +41,19 @@ namespace EscrowService
         {
             services.AddScoped<ITraderService, TraderService>();
             services.AddScoped<ITraderRepo, TraderRepo>();
+            
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<IUserService, UserService>();
+            
             services.AddScoped<IPaymentMethodRepo, PaymentMrthodRepo>();
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+            
+            services.AddScoped<IAdminRepository, AdminRepo>();
+            services.AddScoped<IAdminService, AdminService>();
+            
+            services.AddScoped<ITransactionRepo, TransactionRepo>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -72,10 +82,12 @@ namespace EscrowService
             services.AddDbContext<ApplicationContext>(options => options.UseMySQL(connectionString));
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                
             );
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EscrowService", Version = "v1" });
+                c.DescribeAllEnumsAsStrings();
             });
         }
 

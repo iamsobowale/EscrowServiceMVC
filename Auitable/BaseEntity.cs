@@ -14,7 +14,7 @@ namespace EscrowService.Auitable
         public string Country { get; set; }
         public string QRCode { get; set; }
         public string QRCodeImage { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; }= DateTime.UtcNow;
         public DateTime UpdatedDate { get; set; }
         public int? CreatedBy { get; set; }
         public int? UpdatedBy { get; set; }

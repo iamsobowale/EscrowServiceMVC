@@ -47,7 +47,25 @@ namespace EscrowService.Implementation.Service
             };
 
         }
-        
+
+        public async Task<UserDto> UpdateUser(UpdateUserRequestModel user, int id)
+        {
+            var getUser = await _userRepo.GetUser(id);
+            var updateUser = await _userRepo.UpdateUser(getUser);
+            if (updateUser == null)
+            {
+                return null;
+            }
+
+            return new UserDto
+            {
+                Email = updateUser.Email,
+                Password = updateUser.Password,
+                Role = updateUser.Role,
+            };
+
+        }
+
 
         public async Task<UserResponseModel> Login(UserLoginRequest _request)
         {
