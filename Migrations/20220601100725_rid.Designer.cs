@@ -3,14 +3,16 @@ using System;
 using EscrowService.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EscrowService.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220601100725_rid")]
+    partial class rid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,8 +208,9 @@ namespace EscrowService.Migrations
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ReferenceNumber")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("ReferenceNumber")
+                        .IsRequired()
+                        .HasColumnType("varbinary(16)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

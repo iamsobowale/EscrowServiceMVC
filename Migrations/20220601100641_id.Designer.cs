@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EscrowService.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220530132517_i")]
-    partial class i
+    [Migration("20220601100641_id")]
+    partial class id
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -195,36 +195,12 @@ namespace EscrowService.Migrations
 
             modelBuilder.Entity("EscrowService.Models.Payment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PaymentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("AddressLine1")
-                        .HasColumnType("text");
-
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18, 2)");
-
-                    b.Property<string>("City")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Document")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsSuspended")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime");
@@ -232,18 +208,9 @@ namespace EscrowService.Migrations
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
 
-                    b.Property<string>("QRCode")
-                        .HasColumnType("text");
-
-                    b.Property<string>("QRCodeImage")
-                        .HasColumnType("text");
-
                     b.Property<byte[]>("ReferenceNumber")
                         .IsRequired()
                         .HasColumnType("varbinary(16)");
-
-                    b.Property<string>("State")
-                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -251,13 +218,7 @@ namespace EscrowService.Migrations
                     b.Property<int>("TransactionId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime");
-
-                    b.HasKey("Id");
+                    b.HasKey("PaymentId");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -453,7 +414,7 @@ namespace EscrowService.Migrations
                     b.Property<string>("DeliveryAddress")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("DeliveryDate")
+                    b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("datetime");
 
                     b.Property<string>("ItemDescription")

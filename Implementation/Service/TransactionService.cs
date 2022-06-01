@@ -13,10 +13,12 @@ namespace EscrowService.Implementation.Service
 {
     public class TransactionService:ITransactionService
     {
+        private readonly IPaymentRepo _paymentRepo;
         private readonly ITransactionRepo _transactionRepo;
         private readonly ITraderRepo _traderRepo;
-        public TransactionService(ITransactionRepo transactionRepo, ITraderRepo traderRepo)
+        public TransactionService(IPaymentRepo paymentRepo, ITransactionRepo transactionRepo, ITraderRepo traderRepo)
         {
+            _paymentRepo = paymentRepo;
             _transactionRepo = transactionRepo;
             _traderRepo = traderRepo;
         }
@@ -374,7 +376,7 @@ namespace EscrowService.Implementation.Service
             {
                 return new BaseResponse()
                 {
-                    Message = "Youre not Allowed To Process As A buyer",
+                    Message = "You're not Allowed To Process As A buyer",
                     IsSuccess = false
                 };
             }
@@ -393,6 +395,377 @@ namespace EscrowService.Implementation.Service
             {
                 Message = "Transaction Cant Be Processed Either Because It Has Been Processed or Not Agreed",
                 IsSuccess = false
+            };
+        }
+
+        public async Task<BaseResponse> MakeTransactionActive(string transactionId, string email)
+        {
+           var getTran = await _transactionRepo.GetTransactionByReferenceNumber(transactionId);
+              if (getTran==null)
+              {
+                return new BaseResponse()
+                {
+                     Message = "Transaction Not Found",
+                     IsSuccess = false
+                };
+              }
+
+              var getTransactionPayment = await _paymentRepo.GetPaymentByTransactionId(getTran.ReferenceNumber);
+                if (getTransactionPayment==null)
+                {
+                    return new BaseResponse()
+                    {
+                        Message = "Transaction Payment Not Found",
+                        IsSuccess = false
+                    };
+                }
+                if (getTransactionPayment.Status==PaymentStatus.Success)
+                {
+                    var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+                    if (getTrader.Email==getTran.BuyerId)
+                    {
+                        var changeStatus = getTran.Status = TransactionStatus.isActive;
+                        var update = await _transactionRepo.UpdateTransaction(getTran);
+                        if (update==null)
+                        {
+                            return new BaseResponse()
+                            {
+                                Message = "Transaction Not Active",
+                                IsSuccess = false
+                            };
+                        }
+                        return new BaseResponse()
+                        {
+                            Message = "Transaction Active",
+                            IsSuccess = true
+                        };
+                    }
+                }
+                return new BaseResponse()
+                {
+                    Message = "Transaction Payment Not Successful",
+                    IsSuccess = false
+                };
+        }
+
+        public async Task<BaseResponse> RejectTransaction(string transactionId, string email)
+        {
+            var getTransaction = await _transactionRepo.GetTransactionByReferenceNumber(transactionId);
+            if (getTransaction==null)
+            {
+                return new BaseResponse()
+                {
+                    Message = "Transaction Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader.Email==getTransaction.SellerId)
+            {
+                if (getTransaction.Status == TransactionStatus.isIntialized)
+                {
+                    var get = getTransaction.Status = TransactionStatus.IsRejected;
+                    var updateTransaction = await _transactionRepo.UpdateTransaction(getTransaction);
+                    return new BaseResponse()
+                    {
+                        IsSuccess = true,
+                        Message = "Transaction Rejected Successfully"
+                    };
+                }
+                return new BaseResponse()
+                {
+                    Message = "You Cant Reject Transaction",
+                    IsSuccess = false
+                };
+            }
+            {
+                return new BaseResponse()
+                {
+                    Message = "You're not Allowed To Reject As A buyer",
+                    IsSuccess = false
+                };
+            }  
+        }
+
+        public async Task<BaseResponse> CompleteTransaction(string transactionId, string email)
+        {
+            var getTransaction = await _transactionRepo.GetTransactionByReferenceNumber(transactionId);
+            if (getTransaction==null)
+            {
+                return new BaseResponse()
+                {
+                    Message = "Transaction Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader.Email==getTransaction.BuyerId)
+            {
+                if (getTransaction.Status == TransactionStatus.isProcessing)
+                {
+                    var get = getTransaction.Status = TransactionStatus.IsCompleted;
+                    var updateTransaction = await _transactionRepo.UpdateTransaction(getTransaction);
+                    return new BaseResponse()
+                    {
+                        IsSuccess = true,
+                        Message = "Transaction Completed Successfully"
+                    };
+                }
+                return new BaseResponse()
+                {
+                    Message = "You Cant Complete Transaction",
+                    IsSuccess = false
+                };
+            }
+            {
+                return new BaseResponse()
+                {
+                    Message = "You're not Allowed To Complete As A Seller",
+                    IsSuccess = false
+                };
+            }
+        }
+
+        public async Task<TransactionListResponseModel> GetInitiatedTransactionByTraderEmail(string email)
+        {
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "Trader Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getIntiatedTransaction = await _transactionRepo.GetInitiatedTransactionByTraderEmail(email);
+            if (getIntiatedTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getIntiatedTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    DeliveryDate = x.DeliveryDate,
+                    ItemDescription = x.ItemDescription,
+                    ItemName = x.ItemName,
+                    ItemPrice = x.ItemPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TransactionListResponseModel> GetAgreedTransactionByTraderEmail(string email)
+        {
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "Trader Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getAgreedTransaction = await _transactionRepo.GetAgreedTransactionByTraderEmail(email);
+            if (getAgreedTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getAgreedTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    DeliveryDate = x.DeliveryDate,
+                    ItemDescription = x.ItemDescription,
+                    ItemName = x.ItemName,
+                    ItemPrice = x.ItemPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TransactionListResponseModel> GetCompletedTransactionByTraderEmail(string email)
+        {
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "Trader Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getCompletedTransaction = await _transactionRepo.GetCompletedTransactionByTraderEmail(email);
+            if (getCompletedTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getCompletedTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    DeliveryDate = x.DeliveryDate,
+                    ItemDescription = x.ItemDescription,
+                    ItemName = x.ItemName,
+                    ItemPrice = x.ItemPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TransactionListResponseModel> GetRejectedTransactionByTraderEmail(string email)
+        {
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "Trader Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getRejectedTransaction = await _transactionRepo.GetRejectedTransactionByTraderEmail(email);
+            if (getRejectedTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getRejectedTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    DeliveryDate = x.DeliveryDate,
+                    ItemDescription = x.ItemDescription,
+                    ItemName = x.ItemName,
+                    ItemPrice = x.ItemPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TransactionListResponseModel> GetCancelledTransactionByTraderEmail(string email)
+        {
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "Trader Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getCancelledTransaction = await _transactionRepo.GetCancelledTransactionByTraderEmail(email);
+            if (getCancelledTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getCancelledTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    DeliveryDate = x.DeliveryDate,
+                    ItemDescription = x.ItemDescription,
+                    ItemName = x.ItemName,
+                    ItemPrice = x.ItemPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TransactionListResponseModel> GetAllTransactionByTransactionStatus(TransactionStatus status)
+        {
+            var getTransaction = await _transactionRepo.GetAllTransactionByTransactionStatus(status);
+            if (getTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    DeliveryDate = x.DeliveryDate,
+                    ItemDescription = x.ItemDescription,
+                    ItemName = x.ItemName,
+                    ItemPrice = x.ItemPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
             };
         }
     }

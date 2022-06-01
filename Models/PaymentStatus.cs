@@ -2,7 +2,7 @@ namespace EscrowService.Models
 {
     public enum PaymentStatus
     {
-        Pending,
+        Pending=1,
         Success,
         Failed
     }

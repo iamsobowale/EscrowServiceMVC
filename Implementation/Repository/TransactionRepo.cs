@@ -64,11 +64,7 @@ namespace EscrowService.Implementation.Repository
         {
             return await _context.Transactions.SingleOrDefaultAsync(s => s.Status == status);
         }
-
-        public async Task<IList<Transaction>> GetInitiatedTransactionByTraderEmail(string email)
-        {
-           return await _context.Transactions.Include(c => c.TradersTransactions).Where(c => c.BuyerId == email || c.SellerId == email).ToListAsync();
-        }
+        
 
         public async Task<IList<Transaction>> GetAgreedTransactionByTraderEmail(string email)
         {
@@ -87,6 +83,31 @@ namespace EscrowService.Implementation.Repository
         public async Task<IList<Transaction>> GetAllTransactionByTransactionStatus(TransactionStatus status, string email)
         {
             return await _context.Transactions.Where(s => s.Status == status && s.BuyerId == email || s.SellerId == email).ToListAsync();
+        }
+
+        public async Task<IList<Transaction>> GetInitiatedTransactionByTraderEmail(string email)
+        {
+           return await _context.Transactions.Include(c => c.TradersTransactions).Where(c => c.BuyerId == email || c.SellerId == email && c.Status == TransactionStatus.isIntialized).ToListAsync();
+        }
+
+        public async Task<IList<Transaction>> GetCompletedTransactionByTraderEmail(string email)
+        { 
+            return  await _context.Transactions.Include(c => c.TradersTransactions).Where(c => c.BuyerId == email || c.SellerId == email && c.Status == TransactionStatus.IsCompleted).ToListAsync();
+        }
+
+        public async Task<IList<Transaction>> GetRejectedTransactionByTraderEmail(string email)
+        {
+            return await _context.Transactions.Include(c => c.TradersTransactions).Where(c => c.BuyerId == email || c.SellerId == email && c.Status == TransactionStatus.IsRejected).ToListAsync();
+        }
+
+        public async Task<IList<Transaction>> GetCancelledTransactionByTraderEmail(string email)
+        {
+            return await _context.Transactions.Include(c => c.TradersTransactions).Where(c => c.BuyerId == email || c.SellerId == email && c.Status == TransactionStatus.IsCancelled).ToListAsync();
+        }
+
+        public async Task<IList<Transaction>> GetAllTransactionByTransactionStatus(TransactionStatus status)
+        {
+            return await _context.Transactions.Where(s => s.Status == status).ToListAsync();
         }
     }
 }

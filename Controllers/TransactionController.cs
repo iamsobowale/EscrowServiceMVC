@@ -145,11 +145,34 @@ namespace EscrowService.Controllers
             return Ok(getTransaction);
         }
 
-        // [HttpPost("GetInitiatedTransactionByTraderEmail")]
-        // public async Task<IActionResult> GetInitiatedTransactionByTraderEmail(string reference)
-        // {
-        //     await _traderService
-        // }
+        [HttpPost("GetInitiatedTransactionByTraderEmail")]
+        public async Task<IActionResult> GetInitiatedTransactionByTraderEmail()
+        { 
+            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var getTransactionByTraderEmail = await _transactionService.GetInitiatedTransactionByTraderEmail(get);
+            if (getTransactionByTraderEmail.IsSuccess==false)
+            {
+                return BadRequest(getTransactionByTraderEmail.Message);
+            }
+            return Ok(getTransactionByTraderEmail);
+        }
+        [HttpPost("MakeTransactionActive")]
+        public async Task<IActionResult> MakeTransactionActive(string transactionNumber)
+        {
+            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var getTrader = await _traderService.GetTraderByEmailAsync(get);
+            if (getTrader.IsSuccess==false)
+            {
+                return BadRequest(getTrader.Message);
+            }
+            var getTransaction = await _transactionService.MakeTransactionActive(transactionNumber, getTrader.Traders.Email);
+            if (getTransaction.IsSuccess== false)
+            {
+                return BadRequest(getTransaction.Message);
+            }
+
+            return Ok(getTransaction);
+        }
 
     }
 }

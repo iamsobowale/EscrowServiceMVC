@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace EscrowService.Migrations
 {
-    public partial class i : Migration
+    public partial class id : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -54,7 +54,7 @@ namespace EscrowService.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    DeliveryDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DeliveryDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     ReturnDate = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
@@ -116,31 +116,18 @@ namespace EscrowService.Migrations
                 name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    PaymentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     PaymentMethodId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
                     ReferenceNumber = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    TransactionId = table.Column<int>(type: "int", nullable: false),
-                    IsSuspended = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    AddressLine1 = table.Column<string>(type: "text", nullable: true),
-                    Document = table.Column<string>(type: "text", nullable: true),
-                    City = table.Column<string>(type: "text", nullable: true),
-                    State = table.Column<string>(type: "text", nullable: true),
-                    Country = table.Column<string>(type: "text", nullable: true),
-                    QRCode = table.Column<string>(type: "text", nullable: true),
-                    QRCodeImage = table.Column<string>(type: "text", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true)
+                    TransactionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.PrimaryKey("PK_Payments", x => x.PaymentId);
                     table.ForeignKey(
                         name: "FK_Payments_PaymentMethods_PaymentMethodId",
                         column: x => x.PaymentMethodId,
