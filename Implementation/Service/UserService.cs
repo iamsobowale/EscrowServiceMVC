@@ -25,7 +25,6 @@ namespace EscrowService.Implementation.Service
             return new UserDto
             {
                 Email = getUser.Email,
-                Password = getUser.Password,
                 Role = getUser.Role,
             };
 
@@ -42,7 +41,6 @@ namespace EscrowService.Implementation.Service
             return new UserDto
             {
                 Email = getUser.Email,
-                Password = getUser.Password,
                 Role = getUser.Role,
             };
 
@@ -60,7 +58,6 @@ namespace EscrowService.Implementation.Service
             return new UserDto
             {
                 Email = updateUser.Email,
-                Password = updateUser.Password,
                 Role = updateUser.Role,
             };
 
@@ -76,8 +73,10 @@ namespace EscrowService.Implementation.Service
                 {
                     Data = new UserDto()
                     {
+                        Role = getEmail.Role,
                         Email = getEmail.Email,
                     },
+                    
                     IsSuccess = true,
                     Message = "Login Successfully",
                 };

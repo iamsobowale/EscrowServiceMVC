@@ -34,11 +34,12 @@ namespace EscrowService.JWT
             var tokenHandler = new JwtSecurityTokenHandler(); 
 
             var tokenKey = Encoding.ASCII.GetBytes(_key);
-            var claims = new List<Claim>
+            IList<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
+                new Claim(JwtRegisteredClaimNames.Name, user.Email),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor

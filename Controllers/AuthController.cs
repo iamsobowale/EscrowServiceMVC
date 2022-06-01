@@ -31,7 +31,8 @@ namespace EscrowService.Controllers
             var response = new UserLoginResponse()
             {
                 Email = _request.Email,
-                Data = _jwtauth.GenerateToken(login.Data)
+                Token = _jwtauth.GenerateToken(login.Data),
+                Data = login.Data
             };
             return Ok(response);
         }

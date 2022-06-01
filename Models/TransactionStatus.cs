@@ -3,6 +3,7 @@ namespace EscrowService.Models
     public enum TransactionStatus
     {
         isIntialized=1,
+        isAgreed,
         isActive,
         isProcessing,
         IsDelivered,

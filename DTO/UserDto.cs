@@ -7,7 +7,6 @@ namespace EscrowService.DTO
     {
         public int Id { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
         public Role Role { get; set; }
     }
 
@@ -33,9 +32,8 @@ namespace EscrowService.DTO
     public class UserLoginResponse
     {
         public string Token { get; set; }
-        public string Data { get; set; }
+        public UserDto Data { get; set; }
         public string Email { get; set; }
-        public Role Role { get; set; }
     }
     public class UserResponseModel : BaseResponse
     {

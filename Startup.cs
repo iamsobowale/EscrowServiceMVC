@@ -54,29 +54,26 @@ namespace EscrowService
             services.AddScoped<ITransactionRepo, TransactionRepo>();
             services.AddScoped<ITransactionService, TransactionService>();
             
+            var key = "This is the key that we are going to be using to authorize our user";
+            
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
+                options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:TokenIssuer"],
-                    ValidAudience = Configuration["Jwt:TokenIssuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:TokenKey"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                 };
                 options.RequireHttpsMetadata = false;
             });
-            services.Configure<DataProtectionTokenProviderOptions>(o =>
-                o.TokenLifespan = TimeSpan.FromHours(1)); 
-            var key = "This is the key that we are going to be using to authorize our user";
             services.AddSingleton<IJWTAUTH>(new JWTAUTH(key));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationContext>(options => options.UseMySQL(connectionString));
@@ -102,12 +99,10 @@ namespace EscrowService
             }
 
             app.UseHttpsRedirection();
-
-            app.UseRouting();
+            app.UseStaticFiles();
             app.UseAuthentication();
-
-            app.UseAuthorization();
-
+            app.UseRouting();
+            app.UseAuthorization();  
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

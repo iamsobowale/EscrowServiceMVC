@@ -2,7 +2,7 @@ namespace EscrowService.Models
 {
     public enum Role
     {
-        SuperAdmin,
+        SuperAdmin=1,
         Admin,
         Trader
     }
