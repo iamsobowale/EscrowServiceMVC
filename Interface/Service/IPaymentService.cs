@@ -14,6 +14,5 @@ namespace EscrowService.Interface.Service
         public Task<PaymentListResponseDto> GetPendingPaymentByPaymentStatus(string transactionReference);
         
         public Task<PaymentListResponseDto> GetPaymentByPaymentMethod(string paymentMethod);
-        public Task<string> MakePaymentWithPaystack(string clientid, string secretkey);
     }
 }

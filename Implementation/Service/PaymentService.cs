@@ -232,20 +232,20 @@ namespace EscrowService.Implementation.Service
             throw new System.NotImplementedException();
         }
 
-        public async Task<string> MakePaymentWithPaystack(string clientid, string secretkey)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Post, "token");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientid}:{secretkey}")));
-            request.Content = new FormUrlEncodedContent((new Dictionary<string, string>
-            {
-                { "grant_type", "client_credentials" }
-            }));
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var responseBody = await response.Content.ReadAsStreamAsync();
-            var authResponse = await JsonSerializer.Create().Deserialize<>(responseBody);
-
-        }
+        // public async Task<string> MakePaymentWithPaystack(string clientid, string secretkey)
+        // {
+        //     var request = new HttpRequestMessage(HttpMethod.Post, "token");
+        //     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientid}:{secretkey}")));
+        //     request.Content = new FormUrlEncodedContent((new Dictionary<string, string>
+        //     {
+        //         { "grant_type", "client_credentials" }
+        //     }));
+        //     var response = await _httpClient.SendAsync(request);
+        //     response.EnsureSuccessStatusCode();
+        //     var responseBody = await response.Content.ReadAsStreamAsync();
+        //     var authResponse = await JsonSerializer.Create().Deserialize<>(responseBody);
+        //
+        // }
 
         private decimal SetAmount(decimal amount)
         {
