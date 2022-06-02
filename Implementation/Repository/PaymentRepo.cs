@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using EscrowService.Context;
 using EscrowService.Interface.Repository;
@@ -15,45 +17,54 @@ namespace EscrowService.Implementation.Repository
             _context = context;
         }
 
-        public Task<Payment> CreatePayment(Payment payment)
+        public async Task<Payment> CreatePayment(Payment payment)
         {
-            throw new System.NotImplementedException();
+            _context.Payments.Add(payment);
+            await _context.SaveChangesAsync();
+            return payment;
         }
 
-        public Task<Payment> GetPayment(string paymentId)
+        public async Task<Payment> GetPayment(int paymentId)
         {
-            throw new System.NotImplementedException();
+            return await _context.Payments.Include(c=>c.Transaction).Include(d => d.PaymentMethod).FirstOrDefaultAsync(x => x.PaymentId == paymentId);
         }
 
-        public Task<Payment> UpdatePayment(Payment payment)
+        public async Task<Payment> UpdatePayment(Payment payment)
         {
-            throw new System.NotImplementedException();
+            _context.Entry(payment).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return payment;
         }
 
-        public Task<Payment> DeletePayment(string paymentId)
+        public async Task<Payment> GetPaymentByReferenceNumber(string referenceNumber)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public async Task<Payment> GetPaymentByTransactionId(string transactionId)
-        { 
-            var getPayment = await _context.Payments.Include(c=>c.Transaction).FirstOrDefaultAsync(c=>c.Transaction.ReferenceNumber==transactionId);
+            var getPayment = await _context.Payments.Include(c => c.Transaction).FirstOrDefaultAsync(c => c.Transaction.ReferenceNumber == referenceNumber);
             return getPayment;
         }
 
-        public Task<Payment> GetPaymentByOrderId(string orderId)
+        public async Task<IList<Payment>> GetPaymentByPaymentStatus(PaymentStatus paymentStatus)
         {
-            throw new System.NotImplementedException();
+            var getPayment = await _context.Payments.Include(c => c.Transaction).Where(c => c.Status == paymentStatus).ToListAsync(
+                );
+            return getPayment;
         }
 
-        public Task<Payment> GetPaymentByPaymentStatus(string paymentStatus)
+        public async Task<Payment> GetPaymentByPaymentMethod(string paymentMethod)
         {
-            throw new System.NotImplementedException();
+            var getPayment = await _context.Payments.Include(c => c.Transaction).FirstOrDefaultAsync(c => c.PaymentMethod.Name == paymentMethod);
+            return getPayment;
         }
 
-        public Task<Payment> GetPaymentByPaymentMethod(string paymentMethod)
+        public async Task<IList<Payment>> GetAllSuccessfulPaymentByStatus(string transactionId)
         {
-            throw new System.NotImplementedException();
+            var getPayment = await _context.Payments.Include(c => c.Transaction).Where(c => c.Status == PaymentStatus.Success && c.Transaction.ReferenceNumber == transactionId).ToListAsync();
+            return getPayment;
+        }
+
+        public async Task<IList<Payment>> GetAllPendingPaymentByStatus(string transactionId)
+        {
+            var getPayment = await _context.Payments.Include(c => c.Transaction).Where(c => c.Status == PaymentStatus.Pending && c.Transaction.ReferenceNumber == transactionId).ToListAsync();
+            return getPayment;
         }
     }
 }

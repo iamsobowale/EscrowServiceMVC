@@ -57,7 +57,7 @@ namespace EscrowService.Implementation.Service
                 ItemTitle = transaction.ItemTitle,
                 ItemDescription = transaction.ItemDescription,
                 ReferenceNumber = genertateReferencenumber,
-                DeliveryDate = transaction.DeliveryDate,
+                DeliveryDate = DateTime.Now.AddDays(transaction.DeliveryDate),
                 DeliveryAddress = transaction.DeliveryAddress,
             };
             var createTransaction = await _transactionRepo.CreatTransaction(transactionResponse);
@@ -410,7 +410,7 @@ namespace EscrowService.Implementation.Service
                 };
               }
 
-              var getTransactionPayment = await _paymentRepo.GetPaymentByTransactionId(getTran.ReferenceNumber);
+              var getTransactionPayment = await _paymentRepo.GetPaymentByReferenceNumber(getTran.ReferenceNumber);
                 if (getTransactionPayment==null)
                 {
                     return new BaseResponse()

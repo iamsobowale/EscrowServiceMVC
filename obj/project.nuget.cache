@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "b3U/Ys+wIACKiGxojjZmaeGwoXswiOkYh8Zwng/QJyBHvTzP3CVvZILbkMIUQSbihnhRDoU8kI1BL2Ywbq+m/g==",
+  "dgSpecHash": "sT5eB6AVeO1HLm/DF4e1g7jFie0MHn5/LVn4lXM5bYkJnBe2h9EU1eMybKGz3NrXFRmmla/rZDU6klUTIbXJCg==",
   "success": true,
   "projectFilePath": "C:\\Users\\iamso\\RiderProjects\\EscrowService\\EscrowService\\EscrowService.csproj",
   "expectedPackageFiles": [
@@ -44,6 +44,7 @@
     "C:\\Users\\iamso\\.nuget\\packages\\mysql.entityframeworkcore\\5.0.10\\mysql.entityframeworkcore.5.0.10.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\newtonsoft.json\\12.0.2\\newtonsoft.json.12.0.2.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\newtonsoft.json.bson\\1.0.2\\newtonsoft.json.bson.1.0.2.nupkg.sha512",
+    "C:\\Users\\iamso\\.nuget\\packages\\paystack.net\\0.7.7\\paystack.net.0.7.7.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\swashbuckle.aspnetcore\\5.6.3\\swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\5.6.3\\swashbuckle.aspnetcore.swagger.5.6.3.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\5.6.3\\swashbuckle.aspnetcore.swaggergen.5.6.3.nupkg.sha512",

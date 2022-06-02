@@ -55,7 +55,8 @@ namespace EscrowService
             services.AddScoped<ITransactionService, TransactionService>();
 
             services.AddScoped<IPaymentRepo, PaymentRepo>();
-            
+            services.AddScoped<IPaymentService, PaymentService>();
+
             var key = "This is the key that we are going to be using to authorize our user";
             
             services.AddAuthentication(options =>

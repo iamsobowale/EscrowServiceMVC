@@ -28,7 +28,7 @@ namespace EscrowService.DTO
     public class CreateTransactionDto
     {
         public string BuyerId { get; set; }
-        public DateTime DeliveryDate { get; set; }
+        public int DeliveryDate { get; set; }
         public string DeliveryAddress { get; set; }
         public string ItemTitle { get; set; }
         public string SellerId { get; set; }

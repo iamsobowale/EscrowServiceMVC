@@ -10,6 +10,8 @@ namespace EscrowService.Models
         public int PaymentMethodId { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public decimal Amount { get; set; }
+
+
         public string ReferenceNumber {get;set;}
         public DateTime PaymentDate { get; set; } = DateTime.UtcNow;
         public PaymentStatus Status { get; set; }
