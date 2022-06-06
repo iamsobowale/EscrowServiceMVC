@@ -55,5 +55,6 @@ namespace EscrowService.Context
         public DbSet<Dispute> Disputes { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<TradersTransaction> TradersTransactions { get; set; }
+        public DbSet<TransactionType> TransactionTypes { get; set; }
     }
 }

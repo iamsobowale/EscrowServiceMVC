@@ -15,11 +15,10 @@ namespace EscrowService.Models
         public string SellerId { get; set; }
         public string ItemName { get; set; }
         public string ItemDescription { get; set; } 
-        public decimal ItemPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public string ItemQuantity { get; set; }
         public string ItemTitle { get; set; }
         public string ReferenceNumber { get; set; }
-        public string ItemDoc { get; set; }
         public string DeliveryAddress { get; set; }
         [EnumDataType(typeof(TransactionStatus))]
         [JsonConverter(typeof(StringEnumConverter))]
@@ -27,8 +26,8 @@ namespace EscrowService.Models
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }
         public DateTime DeliveryDate { get; set; }
-        public DateTime? PaymentDate { get; set; }
         public DateTime? ReturnDate { get; set; }
+        public IList<TransactionType> TransactionTypes { get; set; } = new List<TransactionType>();
         public IEnumerable<Message> Messages { get; set; } = new List<Message>();
         public IEnumerable<Payment> Payments { get; set; } = new List<Payment>();
         public IEnumerable<Dispute> Disputes { get; set; } = new List<Dispute>();

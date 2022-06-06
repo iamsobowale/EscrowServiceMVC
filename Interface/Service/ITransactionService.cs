@@ -19,6 +19,7 @@ namespace EscrowService.Interface.Service
         public Task<BaseResponse> CancelTransaction(string transactionId, string email);
         public Task<BaseResponse> ProcessTransaction(string transactionId, string email);
         public Task<BaseResponse> MakeTransactionActive(string transactionId, string email);
+        public Task<BaseResponse> ReleaseTransactionFunds(string transactionId, string transactionTypeRef, string email);
         public Task<BaseResponse> RejectTransaction(string transactionId, string email);
         public Task<BaseResponse> CompleteTransaction(string transactionId, string email);
         public Task<TransactionListResponseModel> GetInitiatedTransactionByTraderEmail(string email);

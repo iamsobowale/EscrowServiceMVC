@@ -59,3 +59,4 @@ C:\Users\iamso\RiderProjects\EscrowService\EscrowService\bin\Debug\net5.0\System
 C:\Users\iamso\RiderProjects\EscrowService\EscrowService\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\iamso\RiderProjects\EscrowService\EscrowService\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.dll
 C:\Users\iamso\RiderProjects\EscrowService\EscrowService\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\iamso\RiderProjects\EscrowService\EscrowService\bin\Debug\net5.0\PayStack.Net.dll

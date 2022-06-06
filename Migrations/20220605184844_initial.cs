@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace EscrowService.Migrations
 {
-    public partial class id : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,17 +45,15 @@ namespace EscrowService.Migrations
                     SellerId = table.Column<string>(type: "text", nullable: true),
                     ItemName = table.Column<string>(type: "text", nullable: true),
                     ItemDescription = table.Column<string>(type: "text", nullable: true),
-                    ItemPrice = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
                     ItemQuantity = table.Column<string>(type: "text", nullable: true),
                     ItemTitle = table.Column<string>(type: "text", nullable: true),
                     ReferenceNumber = table.Column<string>(type: "text", nullable: true),
-                    ItemDoc = table.Column<string>(type: "text", nullable: true),
                     DeliveryAddress = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     DeliveryDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     ReturnDate = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
@@ -120,7 +118,7 @@ namespace EscrowService.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     PaymentMethodId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
-                    ReferenceNumber = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
+                    ReferenceNumber = table.Column<string>(type: "text", nullable: true),
                     PaymentDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     TransactionId = table.Column<int>(type: "int", nullable: false)
@@ -136,6 +134,31 @@ namespace EscrowService.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Payments_Transactions_TransactionId",
+                        column: x => x.TransactionId,
+                        principalTable: "Transactions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TransactionTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    TransactionId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    IsPaidOut = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransactionTypes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TransactionTypes_Transactions_TransactionId",
                         column: x => x.TransactionId,
                         principalTable: "Transactions",
                         principalColumn: "Id",
@@ -342,6 +365,11 @@ namespace EscrowService.Migrations
                 name: "IX_TradersTransactions_TransactionId",
                 table: "TradersTransactions",
                 column: "TransactionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TransactionTypes_TransactionId",
+                table: "TransactionTypes",
+                column: "TransactionId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -357,6 +385,9 @@ namespace EscrowService.Migrations
 
             migrationBuilder.DropTable(
                 name: "TradersTransactions");
+
+            migrationBuilder.DropTable(
+                name: "TransactionTypes");
 
             migrationBuilder.DropTable(
                 name: "Admins");

@@ -417,23 +417,14 @@ namespace EscrowService.Migrations
                     b.Property<string>("ItemDescription")
                         .HasColumnType("text");
 
-                    b.Property<string>("ItemDoc")
-                        .HasColumnType("text");
-
                     b.Property<string>("ItemName")
                         .HasColumnType("text");
-
-                    b.Property<decimal>("ItemPrice")
-                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("ItemQuantity")
                         .HasColumnType("text");
 
                     b.Property<string>("ItemTitle")
                         .HasColumnType("text");
-
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime");
 
                     b.Property<string>("ReferenceNumber")
                         .HasColumnType("text");
@@ -447,12 +438,52 @@ namespace EscrowService.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("EscrowService.Models.TransactionType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsPaidOut")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("TransactionTypes");
                 });
 
             modelBuilder.Entity("EscrowService.Models.User", b =>
@@ -602,6 +633,17 @@ namespace EscrowService.Migrations
                     b.Navigation("Transaction");
                 });
 
+            modelBuilder.Entity("EscrowService.Models.TransactionType", b =>
+                {
+                    b.HasOne("EscrowService.Models.Transaction", "Transaction")
+                        .WithMany("TransactionTypes")
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
+                });
+
             modelBuilder.Entity("EscrowService.Models.Admin", b =>
                 {
                     b.Navigation("Disputes");
@@ -621,6 +663,8 @@ namespace EscrowService.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("TradersTransactions");
+
+                    b.Navigation("TransactionTypes");
                 });
 
             modelBuilder.Entity("EscrowService.Models.User", b =>

@@ -51,7 +51,7 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<Transaction> GetTransactionByReferenceNumber(string referenceNumber)
         {
-            return await _context.Transactions.SingleOrDefaultAsync(s => s.ReferenceNumber == referenceNumber);
+            return await _context.Transactions.Include(C=> C.TransactionTypes).SingleOrDefaultAsync(s => s.ReferenceNumber == referenceNumber);
         }
         
         public async Task<IList<Transaction>> GetAllTradersInTransaction(string referenceNumber)

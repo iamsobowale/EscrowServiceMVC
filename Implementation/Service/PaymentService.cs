@@ -19,34 +19,17 @@ namespace EscrowService.Implementation.Service
         private readonly IPaymentRepo _paymentRepo;
         private readonly ITransactionRepo _transactionRepo;
         private readonly IPaymentMethodRepo _paymentMethodRepo;
-        private  readonly HttpClient _httpClient;
-        private PayStackApi _payStackApi;
-
-        public PaymentService(IPaymentRepo paymentRepo, ITransactionRepo transactionRepo, IPaymentMethodRepo paymentMethodRepo, HttpClient httpClient)
+        public PaymentService(IPaymentRepo paymentRepo, ITransactionRepo transactionRepo, IPaymentMethodRepo paymentMethodRepo)
         {
             _paymentRepo = paymentRepo;
             _transactionRepo = transactionRepo;
             _paymentMethodRepo = paymentMethodRepo;
-            _httpClient = httpClient;
         }
 
         public async Task<BaseResponse> CreatePayment(string transactionReference, string paymentMethod)
         {
             var generateId = $"AdminId{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 5).ToUpper()}";
             var gettransaction = await _transactionRepo.GetTransactionByReferenceNumber(transactionReference);
-            // if (gettransaction.ItemPrice <= 5000000)
-            // {
-            //     var calculate = gettransaction.ItemPrice * (decimal)0.05;
-            // }
-            // else if (gettransaction.ItemPrice > 500000 || gettransaction.ItemPrice <= 10000000)
-            // {
-            //     var calculate = gettransaction.ItemPrice * (decimal)0.04;
-            // }
-            // else if (gettransaction.ItemPrice > 10000000 || gettransaction.ItemPrice <= 50000000)
-            // {
-            //     var calculate = gettransaction.ItemPrice * (decimal)0.15;
-            // }
-
             if (gettransaction.Status == TransactionStatus.isAgreed)
             {
                 var getpaymentmethod = await _paymentMethodRepo.GetPaymentMethodByName(paymentMethod);
@@ -57,10 +40,8 @@ namespace EscrowService.Implementation.Service
                     PaymentDate = DateTime.UtcNow,
                     Status = PaymentStatus.Pending,
                     ReferenceNumber = generateId,
-                    Amount = SetAmount(gettransaction.ItemPrice)
+                    Amount = SetAmount(gettransaction.TotalPrice)
                 };
-                /*makePayment.SetAmount(gettransaction.ItemPrice);
-                makePayment.GetAmount();*/
                 var result = await _paymentRepo.CreatePayment(makePayment);
                 if (result==null)
                 {

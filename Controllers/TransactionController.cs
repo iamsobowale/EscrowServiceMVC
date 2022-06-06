@@ -173,6 +173,24 @@ namespace EscrowService.Controllers
 
             return Ok(getTransaction);
         }
+        [HttpPost("ReleaseTransactionFunds")]
+        public async Task<IActionResult> ReleaseTransactionFunds(string transactionNumber, string transactionTypeRef)
+        {
+            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var getTrader = await _traderService.GetTraderByEmailAsync(get);
+            if (getTrader.IsSuccess==false)
+            {
+                return BadRequest(getTrader.Message);
+            }
+            var getTransaction = await _transactionService.ReleaseTransactionFunds(transactionNumber, transactionTypeRef, getTrader.Traders.Email);
+            if (getTransaction.IsSuccess== false)
+            {
+                return BadRequest(getTransaction.Message);
+            }
+
+            return Ok(getTransaction);
+        }
+        
 
     }
 }

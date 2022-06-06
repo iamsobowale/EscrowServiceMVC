@@ -28,28 +28,13 @@ namespace EscrowService.DTO
     public class CreateTransactionDto
     {
         public string BuyerId { get; set; }
-        public int DeliveryDate { get; set; }
         public string DeliveryAddress { get; set; }
         public string ItemTitle { get; set; }
         public string SellerId { get; set; }
         public string ItemName { get; set; }
         public string ItemDescription { get; set; }
-        public decimal ItemPrice { get; set; }
         public string ItemQuantity { get; set; }
-    }
-    public class UpdateTransactionDto
-    {
-        public string reference_id { get; set; }
-        public TransactionStatus transaction_status { get; set; }
-        public string BuyerId { get; set; }
-        public DateTime DeliveryDate { get; set; }
-        public string DeliveryAddress { get; set; }
-        public string ItemTitle { get; set; }
-        public string SellerId { get; set; }
-        public string ItemName { get; set; }
-        public string ItemDescription { get; set; }
-        public decimal ItemPrice { get; set; }
-        public string ItemQuantity { get; set; }
+        public IList<CreateTransactionTypeServiceDto> TransactionTypeServices { get; set; }
     }
 
     public class TransactionResponseModel:BaseResponse

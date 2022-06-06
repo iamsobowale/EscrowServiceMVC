@@ -21,6 +21,8 @@ namespace EscrowService.Interface.Repository
         public Task<IList<Transaction>> GetRejectedTransactionByTraderEmail(string email);
         public Task<IList<Transaction>> GetCancelledTransactionByTraderEmail(string email);
         public Task<IList<Transaction>> GetAllTransactionByTransactionStatus(TransactionStatus status);
+        
+
 
     }
 }

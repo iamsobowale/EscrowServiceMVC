@@ -40,6 +40,7 @@
           "Microsoft.EntityFrameworkCore.Tools": "5.0.10",
           "Microsoft.IdentityModel.Tokens": "6.18.0",
           "MySql.EntityFrameworkCore": "5.0.10",
+          "Paystack.Net": "0.7.7",
           "Swashbuckle.AspNetCore": "5.6.3",
           "System.IdentityModel.Tokens.Jwt": "6.18.0",
           "Microsoft.AspNetCore.Antiforgery": "5.0.0.0",
@@ -754,6 +755,20 @@
         },
         "compile": {
           "lib/netstandard2.0/Newtonsoft.Json.Bson.dll": {}
+        }
+      },
+      "Paystack.Net/0.7.7": {
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/PayStack.Net.dll": {
+            "assemblyVersion": "0.7.7.0",
+            "fileVersion": "0.7.7.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/PayStack.Net.dll": {}
         }
       },
       "Swashbuckle.AspNetCore/5.6.3": {
@@ -2867,6 +2882,13 @@
       "sha512": "sha512-QYFyxhaABwmq3p/21VrZNYvCg3DaEoN/wUuw5nmfAf0X3HLjgupwhkEWdgfb9nvGAUIv3osmZoD3kKl4jxEmYQ==",
       "path": "newtonsoft.json.bson/1.0.2",
       "hashPath": "newtonsoft.json.bson.1.0.2.nupkg.sha512"
+    },
+    "Paystack.Net/0.7.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-WmSdOg65sXZnIEU/ZGe8D/NGESwNyCEoynYliczeErafYpiXqO8R1JOCg1pHwSNOFVvSvriXxDtsiBKBfe2/VA==",
+      "path": "paystack.net/0.7.7",
+      "hashPath": "paystack.net.0.7.7.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/5.6.3": {
       "type": "package",
