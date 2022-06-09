@@ -32,7 +32,8 @@ namespace EscrowService.Controllers
             {
                 Email = _request.Email,
                 Token = _jwtauth.GenerateToken(login.Data),
-                Data = login.Data
+                Data = login.Data,
+                Status = true
             };
             return Ok(response);
         }

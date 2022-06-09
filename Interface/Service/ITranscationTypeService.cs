@@ -11,6 +11,6 @@ namespace EscrowService.Interface.Service
         Task<BaseResponse> CreateTransactionType(IList<CreateTransactionTypeServiceDto> transactionType, string transactionReferenceNumber);
         Task<BaseResponse> UpdateTransactionType(UpdateTransactionTypeServiceDto transactionType);
         Task<bool> DeleteTransactionType(int id);
-        Task<TransactionTypeListResponseModel> GetAllTransactionTypeByReferenceNumber(int transactionId);
+        Task<TransactionTypeListResponseModel> GetAllTransactionTypeByReferenceNumber(string transactionId);
     }
 }

@@ -59,6 +59,13 @@ namespace EscrowService
 
             services.AddScoped<ITransactionTypeRepo, TransactionTypeRepo>();
             services.AddScoped<ITranscationTypeService, TransactionTypeService>();
+            
+            services.AddCors(a => a.AddPolicy("CorsPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
 
             var key = "This is the key that we are going to be using to authorize our user";
             
@@ -106,6 +113,7 @@ namespace EscrowService
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();  

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EscrowService.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220605200158_second")]
-    partial class second
+    [Migration("20220608173817_third")]
+    partial class third
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -413,15 +413,6 @@ namespace EscrowService.Migrations
                     b.Property<string>("DeliveryAddress")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DeliveryDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("ItemDescription")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ItemName")
-                        .HasColumnType("text");
-
                     b.Property<string>("ItemQuantity")
                         .HasColumnType("text");
 
@@ -458,6 +449,9 @@ namespace EscrowService.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Description")

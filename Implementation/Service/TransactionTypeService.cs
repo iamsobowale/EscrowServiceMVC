@@ -96,9 +96,9 @@ namespace EscrowService.Implementation.Service
             throw new System.NotImplementedException();
         }
 
-        public async Task<TransactionTypeListResponseModel> GetAllTransactionTypeByReferenceNumber(int transactionId)
+        public async Task<TransactionTypeListResponseModel> GetAllTransactionTypeByReferenceNumber(string transactionId)
         {
-            var getTransaction = await _transactionRepo.GetTransaction(transactionId);
+            var getTransaction = await _transactionRepo.GetTransactionByReferenceNumber(transactionId);
             if (getTransaction == null)
             {
                 return new TransactionTypeListResponseModel()

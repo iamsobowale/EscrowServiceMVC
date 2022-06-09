@@ -9,6 +9,7 @@ namespace EscrowService.Models
         public Transaction Transaction { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public DateTime DeliveryDate { get; set; }
         public decimal Price { get; set; }
         public bool IsPaidOut { get; set; }
         public TransactionTypeEnum Status { get; set; }

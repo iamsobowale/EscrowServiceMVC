@@ -4,22 +4,26 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using EscrowService.DTO;
 using EscrowService.Interface.Repository;
 using EscrowService.Interface.Service;
 using EscrowService.Models;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using PayStack.Net;
 
 namespace EscrowService.Implementation.Service
 {
-    public class PaymentService:IPaymentService
+    public class PaymentService : IPaymentService
     {
         private readonly IPaymentRepo _paymentRepo;
         private readonly ITransactionRepo _transactionRepo;
         private readonly IPaymentMethodRepo _paymentMethodRepo;
-        public PaymentService(IPaymentRepo paymentRepo, ITransactionRepo transactionRepo, IPaymentMethodRepo paymentMethodRepo)
+
+        public PaymentService(IPaymentRepo paymentRepo, ITransactionRepo transactionRepo,
+            IPaymentMethodRepo paymentMethodRepo)
         {
             _paymentRepo = paymentRepo;
             _transactionRepo = transactionRepo;
@@ -28,7 +32,7 @@ namespace EscrowService.Implementation.Service
 
         public async Task<BaseResponse> CreatePayment(string transactionReference, string paymentMethod)
         {
-            var generateId = $"AdminId{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 5).ToUpper()}";
+            var generateId = $"PaymentId{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 5).ToUpper()}";
             var gettransaction = await _transactionRepo.GetTransactionByReferenceNumber(transactionReference);
             if (gettransaction.Status == TransactionStatus.isAgreed)
             {
@@ -39,11 +43,11 @@ namespace EscrowService.Implementation.Service
                     PaymentMethodId = getpaymentmethod.Id,
                     PaymentDate = DateTime.UtcNow,
                     Status = PaymentStatus.Pending,
-                    ReferenceNumber = generateId,
+                    ReferenceNumber = gettransaction.ReferenceNumber,
                     Amount = SetAmount(gettransaction.TotalPrice)
                 };
                 var result = await _paymentRepo.CreatePayment(makePayment);
-                if (result==null)
+                if (result == null)
                 {
                     return new BaseResponse
                     {
@@ -51,9 +55,49 @@ namespace EscrowService.Implementation.Service
                         Message = "Payment Failed"
                     };
                 }
-                makePayment.Status = PaymentStatus.Success;
-                var updatepayment = await _paymentRepo.UpdatePayment(makePayment);
-                if (updatepayment == null)
+
+                using var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri("https://api.paystack.co/transaction/initialize");
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", "sk_test_6483775b59a2152f947af8583a987e98eb5c7af2");
+                var content = new StringContent(JsonConvert.SerializeObject(new
+                {
+                    amount = makePayment.Amount * 100,
+                    email = gettransaction.BuyerId,
+                    reference = makePayment.ReferenceNumber,
+                    metadata = new
+                    {
+                        transaction_id = makePayment.TransactionId,
+                        payment_method = makePayment.PaymentMethodId
+                    }
+                }), Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync("https://api.paystack.co/transaction/initialize", content);
+                var responseString = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    var responseObject = JsonConvert.DeserializeObject<PayStackResponse>(responseString);
+
+                    if (responseObject.status)
+                    {
+
+                        return new BaseResponse
+                        {
+                            IsSuccess = true,
+                            Message = responseObject.data.authorization_url
+                        };
+                    }
+                    else
+                    {
+                        return new BaseResponse
+                        {
+                            IsSuccess = false,
+                            Message = responseObject.message
+                        };
+                    }
+                }
+                else
                 {
                     return new BaseResponse
                     {
@@ -61,14 +105,9 @@ namespace EscrowService.Implementation.Service
                         Message = "Payment Failed"
                     };
                 }
-                gettransaction.Status = TransactionStatus.isActive;
-                await _transactionRepo.UpdateTransaction(gettransaction);
-                return new BaseResponse
-                {
-                    IsSuccess = true,
-                    Message = "Payment Success"
-                };
+
             }
+
             {
                 return new BaseResponse
                 {
@@ -78,9 +117,74 @@ namespace EscrowService.Implementation.Service
             }
         }
 
+        public async Task<BaseResponse> VerifyPayment(string TransactionRefernce)
+        {
+            var getTransactionRefernce = await _paymentRepo.GetPaymentByReferenceNumber(TransactionRefernce);
+            if (getTransactionRefernce == null)
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = "Transaction not found"
+                };
+            }
+
+            var getHttpClient = new HttpClient();
+            getHttpClient.DefaultRequestHeaders.Accept.Clear();
+            getHttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var baseUri = getHttpClient.BaseAddress = new Uri("https://api.paystack.co/transaction/verify/" + TransactionRefernce);
+            getHttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", "sk_test_6483775b59a2152f947af8583a987e98eb5c7af2");
+            var response =
+                await getHttpClient.GetAsync(baseUri);
+            var responseString = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var responseObject = JsonConvert.DeserializeObject<PayStackResponse>(responseString);
+                if (responseObject.status)
+                {
+                    var getPayment = await _paymentRepo.GetPaymentByReferenceNumber(getTransactionRefernce.ReferenceNumber);
+                    if (getPayment.Status == PaymentStatus.Pending)
+                    {
+                        getPayment.Status = PaymentStatus.Success;
+                        getPayment.PaymentDate = DateTime.UtcNow;
+                        var result = await _paymentRepo.UpdatePayment(getPayment);
+                        if (result==null)
+                        {
+                            return new BaseResponse
+                            {
+                                IsSuccess = false,
+                                Message = "Payment Failed"
+                            };
+                        }
+                        return new BaseResponse
+                        {
+                            IsSuccess = true,
+                            Message = "Payment Already Verified"
+                        };
+                    }
+                    else
+                    {
+                        return new BaseResponse
+                        {
+                            IsSuccess = false,
+                            Message = "Verification Failed"
+                        };
+                    }
+                }
+            }
+           
+            return new BaseResponse
+            {
+                IsSuccess = false,
+                Message = "Payment Failed"
+            };
+            
+        }
+
         public async Task<PaymentResponseDto> GetPayment(int paymentId)
         {
-           var getPayment = await _paymentRepo.GetPayment(paymentId);
+            var getPayment = await _paymentRepo.GetPayment(paymentId);
             if (getPayment == null)
             {
                 return new PaymentResponseDto
@@ -106,7 +210,7 @@ namespace EscrowService.Implementation.Service
 
         public async Task<PaymentResponseDto> GetPaymentByReferenceNumber(string referenceNumber)
         {
-           var get = await _paymentRepo.GetPaymentByReferenceNumber(referenceNumber);
+            var get = await _paymentRepo.GetPaymentByReferenceNumber(referenceNumber);
             if (get == null)
             {
                 return new PaymentResponseDto

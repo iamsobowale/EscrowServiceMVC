@@ -24,8 +24,8 @@ namespace EscrowService.Controllers
             var result = await _transactionService.CreateTransactionType(createTransactionTypeServiceDto, TransactionType);
             return Ok(result);
         }
-        [HttpGet("GetAllByTransactionRefernceNumber")]
-        public async Task<IActionResult> GetAllByTransactionRefernceNumber(int TransactionRefernceNumber)
+        [HttpGet("GetAllByTransactionRefernceNumber/{TransactionRefernceNumber}")]
+        public async Task<IActionResult> GetAllByTransactionRefernceNumber([FromRoute]string TransactionRefernceNumber)
         {
             var result = await _transactionService.GetAllTransactionTypeByReferenceNumber(TransactionRefernceNumber);
             if (result.IsSuccess==false)

@@ -13,8 +13,6 @@ namespace EscrowService.Models
         public int Id { get; set; }
         public string BuyerId { get; set; }
         public string SellerId { get; set; }
-        public string ItemName { get; set; }
-        public string ItemDescription { get; set; } 
         public decimal TotalPrice { get; set; }
         public string ItemQuantity { get; set; }
         public string ItemTitle { get; set; }
@@ -25,7 +23,6 @@ namespace EscrowService.Models
         public TransactionStatus Status { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }
-        public DateTime DeliveryDate { get; set; }
         public DateTime? ReturnDate { get; set; }
         public IList<TransactionType> TransactionTypes { get; set; } = new List<TransactionType>();
         public IEnumerable<Message> Messages { get; set; } = new List<Message>();

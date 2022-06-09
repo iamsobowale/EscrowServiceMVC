@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace EscrowService.Migrations
 {
-    public partial class initial : Migration
+    public partial class third : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -43,8 +43,6 @@ namespace EscrowService.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     BuyerId = table.Column<string>(type: "text", nullable: true),
                     SellerId = table.Column<string>(type: "text", nullable: true),
-                    ItemName = table.Column<string>(type: "text", nullable: true),
-                    ItemDescription = table.Column<string>(type: "text", nullable: true),
                     TotalPrice = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
                     ItemQuantity = table.Column<string>(type: "text", nullable: true),
                     ItemTitle = table.Column<string>(type: "text", nullable: true),
@@ -53,7 +51,6 @@ namespace EscrowService.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    DeliveryDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     ReturnDate = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
@@ -149,9 +146,11 @@ namespace EscrowService.Migrations
                     TransactionId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    DeliveryDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
                     IsPaidOut = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    Reference = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>

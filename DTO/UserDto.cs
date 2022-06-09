@@ -34,6 +34,7 @@ namespace EscrowService.DTO
         public string Token { get; set; }
         public UserDto Data { get; set; }
         public string Email { get; set; }
+        public bool Status { get; set; }
     }
     public class UserResponseModel : BaseResponse
     {

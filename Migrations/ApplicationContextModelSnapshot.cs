@@ -411,15 +411,6 @@ namespace EscrowService.Migrations
                     b.Property<string>("DeliveryAddress")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DeliveryDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("ItemDescription")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ItemName")
-                        .HasColumnType("text");
-
                     b.Property<string>("ItemQuantity")
                         .HasColumnType("text");
 
@@ -456,6 +447,9 @@ namespace EscrowService.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Description")

@@ -32,5 +32,15 @@ namespace EscrowService.Controllers
             }
             return Ok(paymentId);
         }
+        [HttpGet("VerifyPayment")]
+        public async Task<IActionResult> VerifyPayment(string PaymentReference)
+        {
+            var paymentId = await _paymentService.VerifyPayment(PaymentReference);
+            if (paymentId.IsSuccess == false)
+            {
+                return BadRequest(paymentId.Message);
+            }
+            return Ok(paymentId);
+        }
     }
 }

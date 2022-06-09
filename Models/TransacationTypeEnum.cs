@@ -4,6 +4,7 @@ namespace EscrowService.Models
     {
         
         IsAccpeted = 1,
-        IsRejected = 2,
+        IsActive,
+        IsRejected 
     }
 }
