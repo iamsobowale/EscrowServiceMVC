@@ -7,6 +7,7 @@ using EscrowService.DTO;
 using EscrowService.Interface.Repository;
 using EscrowService.Interface.Service;
 using EscrowService.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EscrowService.Implementation.Service
 {
@@ -54,7 +55,6 @@ namespace EscrowService.Implementation.Service
             {
                 Name = transactionType[0].Name,
                 Description = transactionType[0].Description,
-                IsPaidOut = false,
                 CreatedDate = DateTime.Now,
                 TransactionId = getTransction.Id,
                 Price = transactionType[0].Price
@@ -115,11 +115,73 @@ namespace EscrowService.Implementation.Service
                 Transaction = getTransactionTypes.Select(c => new TransactionTypeServiceDto()
                 {
                     Name = c.Name,
+                    TransactionReferenceNumber = c.Reference,
                     Description = c.Description,
-                    IsPaidOut = c.IsPaidOut,
                     Price = c.Price,
+                    Status = c.Status,
                     CreatedDate = c.CreatedDate
                 }).ToList()
+            };
+        }
+
+        public async Task<BaseResponse> AcceptSubTransaction(string transactionReferenceNumber)
+        {
+            
+            var getTransactionType = await _transactionTypeRepo.GetTransactionTypeByRefrenceName(transactionReferenceNumber);
+            if (getTransactionType == null)
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = "Transaction type not found"
+                };
+            }
+            getTransactionType.Status = TransactionTypeEnum.Accpeted;
+            var updateTransactionType = await _transactionTypeRepo.UpdateTransactionType(getTransactionType);
+           
+            if (updateTransactionType == null)
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = "Transaction type not updated"
+                };
+            }
+            bool isAccepted = updateTransactionType.Status == TransactionTypeEnum.Accpeted;
+            return new BaseResponse
+            {
+                IsSuccess = isAccepted,
+                Message = "Transaction type Accepted"
+            };
+           
+        }
+
+        public async Task<BaseResponse> RejectSubTransaction(string transactionReferenceNumber)
+        {
+            var getTransactionType = await _transactionTypeRepo.GetTransactionTypeByRefrenceName(transactionReferenceNumber);
+            if (getTransactionType == null)
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = "Transaction type not found"
+                };
+            }
+            getTransactionType.Status = TransactionTypeEnum.Rejected;
+            var updateTransactionType = await _transactionTypeRepo.UpdateTransactionType(getTransactionType);
+            if (updateTransactionType == null)
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = "Transaction type not updated"
+                };
+            }
+            bool isRejected = updateTransactionType.Status == TransactionTypeEnum.Rejected;
+            return new BaseResponse
+            {
+                IsSuccess = isRejected,
+                Message = "Transaction type Rejected"
             };
         }
     }

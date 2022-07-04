@@ -455,9 +455,6 @@ namespace EscrowService.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsPaidOut")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
 

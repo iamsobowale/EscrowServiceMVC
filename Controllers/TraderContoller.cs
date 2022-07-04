@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using EscrowService.DTO;
 using EscrowService.Interface.Service;
@@ -35,9 +36,10 @@ namespace EscrowService.Controllers
             return Ok(result);
         }
         [HttpPut("UpdateTrader")]
-        public async Task<IActionResult> UpdateTrader([FromQuery]TraderUpdateRequestModel request, int id)
+        public async Task<IActionResult> UpdateTrader(TraderUpdateRequestModel request)
         {
-            var result = await _traderService.UpdateTraderAsync(request, id);
+            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var result = await _traderService.UpdateTraderAsync(request, get);
             return Ok(result);
         }
         [HttpDelete("DeleteTrader")]
@@ -46,8 +48,8 @@ namespace EscrowService.Controllers
             var result = await _traderService.DeleteTraderAsync(id);
             return Ok(result);
         }
-        [HttpGet("GetTraderByEmail")]
-        public async Task<IActionResult> GetTraderByEmail(string email)
+        [HttpGet("GetTraderByEmail/{email}")]
+        public async Task<IActionResult> GetTraderByEmail([FromRoute]string email)
         {
             var result = await _traderService.GetTraderByEmailAsync(email);
             return Ok(result);

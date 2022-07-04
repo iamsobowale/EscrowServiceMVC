@@ -94,15 +94,10 @@ namespace EscrowService.Controllers
             return Ok(result);
         }
         [HttpPost("ConfirmTransaction")]
-        public async Task<IActionResult> ConfirmTransaction(string reference)
+        public async Task<IActionResult> ConfirmTransaction([FromBody]string reference)
         {
             var get =User.FindFirst(ClaimTypes.Name).Value;
-            var getTrader = await _traderService.GetTraderByEmailAsync(get);
-            if (getTrader.IsSuccess == false)
-            {
-                return BadRequest(getTrader.Message);
-            }
-            var result = await _transactionService.ConFirmTransaction(reference, getTrader.Traders.Email);
+            var result = await _transactionService.ConFirmTransaction(reference, get);
             if (result.IsSuccess == false)
             {
                 return BadRequest(result.Message);
@@ -130,15 +125,10 @@ namespace EscrowService.Controllers
         }
         [Authorize (Roles = "Trader")]
         [HttpPost("ProcessTrasaction")]
-        public  async Task<IActionResult> ProcessTrasaction(string reference)
+        public  async Task<IActionResult> ProcessTrasaction([FromBody]string reference)
         {
             var get =User.FindFirst(ClaimTypes.Name).Value;
-            var getTrader =await _traderService.GetTraderByEmailAsync(get);
-            if (getTrader.IsSuccess==false)
-            {
-                return BadRequest(getTrader.Message);
-            }
-            var getTransaction = await _transactionService.ProcessTransaction(reference, getTrader.Traders.Email);
+            var getTransaction = await _transactionService.ProcessTransaction(reference, get);
             if (getTransaction.IsSuccess== false)
             {
                 return BadRequest(getTransaction.Message);
@@ -221,6 +211,30 @@ namespace EscrowService.Controllers
                 return Ok(getTransactionByTraderEmail);
               }
 
+              [HttpGet("GetActiveTransactionByTraderEmail")]
+              public async Task<IActionResult> GetActiveTransactionByTraderEmail()
+              {
+                  var get =User.FindFirst(ClaimTypes.Name).Value;
+                  var getTransactionByTraderEmail = await _transactionService.GetActiveTransactionByTraderEmail(get);
+                  if (getTransactionByTraderEmail.IsSuccess==false)
+                  {
+                      return BadRequest(getTransactionByTraderEmail.Message);
+                  }
+                  return Ok(getTransactionByTraderEmail);
+                  
+              }
 
+              [HttpGet("GetAgreedTransactions")]
+              public async Task<IActionResult> GetAgreedTransactions()
+              {
+                  var get =User.FindFirst(ClaimTypes.Name).Value;
+                  var getTransaction = await _transactionService.GetAgreedTransactionByTraderEmail(get);
+                  if (getTransaction.IsSuccess == false)
+                  {
+                      return BadRequest(getTransaction);
+                  }
+
+                  return Ok(getTransaction);
+              }
     }
 }

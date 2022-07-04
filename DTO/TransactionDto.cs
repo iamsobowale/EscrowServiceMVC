@@ -20,7 +20,6 @@ namespace EscrowService.DTO
         public string ItemTitle { get; set; }
         public string SellerId { get; set; }
         public DateTime CreatedDate { get; set; }
-        public decimal ItemPrice { get; set; }
         public string ItemQuantity { get; set; }
     }
     public class CreateTransactionDto

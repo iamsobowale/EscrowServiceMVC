@@ -8,6 +8,7 @@ namespace EscrowService.Interface.Repository
     {
         Task<TransactionType> GetTransactionTypeById(int id);
         Task<TransactionType> GetTransactionTypeByReference(string reference, int transactionId);
+        Task<TransactionType> GetTransactionTypeByRefrenceName(string reference);
         Task<TransactionType> CreateTransactionType(TransactionType transactionType);
         Task<IList<TransactionType>> CreateMultipleTransactionType(IList<TransactionType> transactionType);
         Task<TransactionType> UpdateTransactionType(TransactionType transactionType);

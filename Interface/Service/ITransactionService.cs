@@ -26,8 +26,10 @@ namespace EscrowService.Interface.Service
         public Task<TransactionListResponseModel> GetAgreedTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetCompletedTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetRejectedTransactionByTraderEmail(string email);
+        public Task<TransactionListResponseModel> GetActiveTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetCancelledTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetAllTransactionByTransactionStatus(TransactionStatus status);
+        
 
     }
 }

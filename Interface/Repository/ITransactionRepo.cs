@@ -11,6 +11,7 @@ namespace EscrowService.Interface.Repository
         public Task<Transaction> UpdateTransaction(Transaction transaction);
         public Task<Transaction> DeleteTransaction(int transactionId);
         public Task<IList<Transaction>> GetAllTransaction();
+        public Task<IList<Transaction>> GetAllActiveTransactionByTraderEmail(string traderEmail);
         public Task<Transaction> GetTransactionByReferenceNumber(string referenceNumber);
         public Task<IList<Transaction>> GetAllTransactionsByTraderEmail(string email);
         public Task<IList<Transaction>> GetAllTradersInTransaction(string referenceNumber);

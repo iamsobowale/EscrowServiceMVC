@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\iamso\\RiderProjects\\EscrowService\\EscrowService\\EscrowService.csproj": {}
+    "C:\\Users\\iamso\\Desktop\\Gii\\EscrowServiceMVC\\EscrowService.csproj": {}
   },
   "projects": {
-    "C:\\Users\\iamso\\RiderProjects\\EscrowService\\EscrowService\\EscrowService.csproj": {
+    "C:\\Users\\iamso\\Desktop\\Gii\\EscrowServiceMVC\\EscrowService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\iamso\\RiderProjects\\EscrowService\\EscrowService\\EscrowService.csproj",
+        "projectUniqueName": "C:\\Users\\iamso\\Desktop\\Gii\\EscrowServiceMVC\\EscrowService.csproj",
         "projectName": "EscrowService",
-        "projectPath": "C:\\Users\\iamso\\RiderProjects\\EscrowService\\EscrowService\\EscrowService.csproj",
+        "projectPath": "C:\\Users\\iamso\\Desktop\\Gii\\EscrowServiceMVC\\EscrowService.csproj",
         "packagesPath": "C:\\Users\\iamso\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\iamso\\RiderProjects\\EscrowService\\EscrowService\\obj\\",
+        "outputPath": "C:\\Users\\iamso\\Desktop\\Gii\\EscrowServiceMVC\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\iamso\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -91,6 +91,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[5.0.16, 5.0.16]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -99,7 +105,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.104\\RuntimeIdentifierGraph.json"
         }
       }
     }

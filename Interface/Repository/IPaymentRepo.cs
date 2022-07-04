@@ -10,6 +10,7 @@ namespace EscrowService.Interface.Repository
         public Task<Payment> GetPayment(int paymentId);
         public Task<Payment> UpdatePayment(Payment payment);
         public Task<Payment> GetPaymentByReferenceNumber(string referenceNumber);
+        public Task<Payment> GetPaymentByTransactionReferenceNumber(string referenceNumber);
         public Task<IList<Payment>> GetPaymentByPaymentStatus(PaymentStatus paymentStatus);
         public Task<Payment> GetPaymentByPaymentMethod(string paymentMethod);
         public Task<IList<Payment>> GetAllSuccessfulPaymentByStatus(string transactionId);

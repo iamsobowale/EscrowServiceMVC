@@ -13,6 +13,7 @@ using EscrowService.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using PayStack.Net;
+using TransactionInitialize = EscrowService.Models.TransactionInitialize;
 
 namespace EscrowService.Implementation.Service
 {
@@ -30,7 +31,7 @@ namespace EscrowService.Implementation.Service
             _paymentMethodRepo = paymentMethodRepo;
         }
 
-        public async Task<BaseResponse> CreatePayment(string transactionReference, string paymentMethod)
+        public async Task<PayStackResponse> CreatePayment(string transactionReference, string paymentMethod)
         {
             var generateId = $"PaymentId{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 5).ToUpper()}";
             var gettransaction = await _transactionRepo.GetTransactionByReferenceNumber(transactionReference);
@@ -49,10 +50,11 @@ namespace EscrowService.Implementation.Service
                 var result = await _paymentRepo.CreatePayment(makePayment);
                 if (result == null)
                 {
-                    return new BaseResponse
+                    return new PayStackResponse()
                     {
-                        IsSuccess = false,
-                        Message = "Payment Failed"
+                       
+                        status = false,
+                        message = "Payment Failed",
                     };
                 }
 
@@ -75,52 +77,49 @@ namespace EscrowService.Implementation.Service
                 }), Encoding.UTF8, "application/json");
                 var response = await httpClient.PostAsync("https://api.paystack.co/transaction/initialize", content);
                 var responseString = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<PayStackResponse>(responseString);
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var responseObject = JsonConvert.DeserializeObject<PayStackResponse>(responseString);
-
+                    
                     if (responseObject.status)
                     {
-
-                        return new BaseResponse
+                        return new PayStackResponse()
                         {
-                            IsSuccess = true,
-                            Message = responseObject.data.authorization_url
+                            status = true,
+                            message = responseObject.data.authorization_url,
+                            data = new TransactionInitialize()
+                            {
+                                authorization_url = responseObject.data.authorization_url,
+                                reference = makePayment.ReferenceNumber
+                            }
                         };
                     }
-                    else
-                    {
-                        return new BaseResponse
-                        {
-                            IsSuccess = false,
-                            Message = responseObject.message
-                        };
-                    }
+                   
                 }
                 else
                 {
-                    return new BaseResponse
+                    return new PayStackResponse()
                     {
-                        IsSuccess = false,
-                        Message = "Payment Failed"
+                        status = false,
+                        message = responseObject.message
                     };
                 }
 
             }
 
             {
-                return new BaseResponse
+                return new PayStackResponse()
                 {
-                    IsSuccess = false,
-                    Message = "Cannot make payment, transaction is not agreed"
+                    status = false,
+                    message = "Cannot make payment, transaction is not agreed"
                 };
             }
         }
 
-        public async Task<BaseResponse> VerifyPayment(string TransactionRefernce)
+        public async Task<BaseResponse> VerifyPayment(string transactionReference)
         {
-            var getTransactionRefernce = await _paymentRepo.GetPaymentByReferenceNumber(TransactionRefernce);
-            if (getTransactionRefernce == null)
+            var getTransactionReference = await _paymentRepo.GetPaymentByTransactionReferenceNumber(transactionReference);
+            if (getTransactionReference == null)
             {
                 return new BaseResponse
                 {
@@ -132,7 +131,7 @@ namespace EscrowService.Implementation.Service
             var getHttpClient = new HttpClient();
             getHttpClient.DefaultRequestHeaders.Accept.Clear();
             getHttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var baseUri = getHttpClient.BaseAddress = new Uri("https://api.paystack.co/transaction/verify/" + TransactionRefernce);
+            var baseUri = getHttpClient.BaseAddress = new Uri("https://api.paystack.co/transaction/verify/" + transactionReference);
             getHttpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", "sk_test_6483775b59a2152f947af8583a987e98eb5c7af2");
             var response =
@@ -143,7 +142,7 @@ namespace EscrowService.Implementation.Service
                 var responseObject = JsonConvert.DeserializeObject<PayStackResponse>(responseString);
                 if (responseObject.status)
                 {
-                    var getPayment = await _paymentRepo.GetPaymentByReferenceNumber(getTransactionRefernce.ReferenceNumber);
+                    var getPayment = await _paymentRepo.GetPaymentByReferenceNumber(getTransactionReference.ReferenceNumber);
                     if (getPayment.Status == PaymentStatus.Pending)
                     {
                         getPayment.Status = PaymentStatus.Success;

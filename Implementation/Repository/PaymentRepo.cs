@@ -42,6 +42,12 @@ namespace EscrowService.Implementation.Repository
             return getPayment;
         }
 
+        public async Task<Payment> GetPaymentByTransactionReferenceNumber(string referenceNumber)
+        {
+            return  await _context.Payments.Include(c => c.Transaction)
+                .FirstOrDefaultAsync(d => d.Transaction.ReferenceNumber == referenceNumber);
+        }
+
         public async Task<IList<Payment>> GetPaymentByPaymentStatus(PaymentStatus paymentStatus)
         {
             var getPayment = await _context.Payments.Include(c => c.Transaction).Where(c => c.Status == paymentStatus).ToListAsync(

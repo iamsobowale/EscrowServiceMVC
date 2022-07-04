@@ -80,9 +80,9 @@ namespace EscrowService.Implementation.Service
                 Message = "Trader Created Successfully"
             };
         }
-        public async Task<BaseResponse> UpdateTraderAsync(TraderUpdateRequestModel requestModel, int id)
+        public async Task<BaseResponse> UpdateTraderAsync(TraderUpdateRequestModel requestModel, string id)
         {
-            var trader = await _traderRepo.GetTraderAsync(id);
+            var trader = await _traderRepo.GetTraderByEmailAsync(id);
             if (trader==null)
             {
                 return new BaseResponse()

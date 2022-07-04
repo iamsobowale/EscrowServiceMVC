@@ -24,8 +24,8 @@ namespace EscrowService.Controllers
             var result = await _transactionService.CreateTransactionType(createTransactionTypeServiceDto, TransactionType);
             return Ok(result);
         }
-        [HttpGet("GetAllByTransactionRefernceNumber/{TransactionRefernceNumber}")]
-        public async Task<IActionResult> GetAllByTransactionRefernceNumber([FromRoute]string TransactionRefernceNumber)
+        [HttpGet("GetAllTransactionTypeByTransactionReferenceNumber/{TransactionRefernceNumber}")]
+        public async Task<IActionResult> GetAllTransactionTypeByTransactionReferenceNumber([FromRoute]string TransactionRefernceNumber)
         {
             var result = await _transactionService.GetAllTransactionTypeByReferenceNumber(TransactionRefernceNumber);
             if (result.IsSuccess==false)
@@ -34,7 +34,26 @@ namespace EscrowService.Controllers
             }
             return Ok(result);
         }
-        
-        
+        [HttpPost("AcceptTransaction/{transactionReferenceNumber}")]
+        public async Task<IActionResult> AcceptTransaction([FromRoute]string transactionReferenceNumber)
+        {
+            var result = await _transactionService.AcceptSubTransaction(transactionReferenceNumber);
+            if (result.IsSuccess == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
+        [HttpPost("RejectTransaction/{transactionReferenceNumber}")]
+        public async Task<IActionResult> RejectTransaction([FromRoute]string transactionReferenceNumber)
+        {
+            var result = await _transactionService.RejectSubTransaction(transactionReferenceNumber);
+            if (result.IsSuccess == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
     }
 }

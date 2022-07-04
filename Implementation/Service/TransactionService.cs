@@ -99,8 +99,7 @@ namespace EscrowService.Implementation.Service
                 {
                     Name = item.Name,
                     Description = item.Description,
-                    IsPaidOut = false,
-                    Status = TransactionTypeEnum.IsActive,
+                    Status = TransactionTypeEnum.Active,
                     CreatedDate = DateTime.Now,
                     DeliveryDate = DateTime.Now.AddDays(item.DeliveryDate),
                     TransactionId = transactionResponse.Id,
@@ -147,7 +146,6 @@ namespace EscrowService.Implementation.Service
                     transaction_status = getTransaction.Status,
                     BuyerId = getTransaction.BuyerId,
                     DeliveryAddress = getTransaction.DeliveryAddress,
-                    ItemPrice = getTransaction.TotalPrice,
                     ItemQuantity = getTransaction.ItemQuantity,
                     ItemTitle = getTransaction.ItemTitle,
                     SellerId = getTransaction.SellerId,
@@ -167,7 +165,6 @@ namespace EscrowService.Implementation.Service
                   transaction_status = getTransaction.Status,
                   BuyerId = getTransaction.BuyerId,
                   DeliveryAddress = getTransaction.DeliveryAddress,
-                  ItemPrice = getTransaction.TotalPrice,
                   ItemQuantity = getTransaction.ItemQuantity,
                   ItemTitle = getTransaction.ItemTitle,
                   SellerId = getTransaction.SellerId,
@@ -202,7 +199,6 @@ namespace EscrowService.Implementation.Service
                     transaction_status = getTransaction.Status,
                     BuyerId = getTransaction.BuyerId,
                     DeliveryAddress = getTransaction.DeliveryAddress,
-                    ItemPrice = getTransaction.TotalPrice,
                     ItemQuantity = getTransaction.ItemQuantity,
                     ItemTitle = getTransaction.ItemTitle,
                     TotalPrice = getTransaction.TotalPrice,
@@ -224,7 +220,6 @@ namespace EscrowService.Implementation.Service
                     transaction_status = getTransaction.Status,
                     BuyerId = getTransaction.BuyerId,
                     DeliveryAddress = getTransaction.DeliveryAddress,
-                    ItemPrice = getTransaction.TotalPrice,
                     ItemQuantity = getTransaction.ItemQuantity,
                     ItemTitle = getTransaction.ItemTitle,
                     SellerId = getTransaction.SellerId,
@@ -253,7 +248,6 @@ namespace EscrowService.Implementation.Service
                    transaction_status = getTransaction.Status,
                    BuyerId = getTransaction.BuyerId,
                    DeliveryAddress = getTransaction.DeliveryAddress,
-                   ItemPrice = getTransaction.TotalPrice,
                    TotalPrice = getTransaction.TotalPrice,
                    ItemQuantity = getTransaction.ItemQuantity,
                    ItemTitle = getTransaction.ItemTitle,
@@ -299,15 +293,15 @@ namespace EscrowService.Implementation.Service
                     IsSuccess = false
                 };
             }
-            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
-            if (getTrader.Email==getTransaction.BuyerId)
-            {
-                return new BaseResponse()
-                {
-                    IsSuccess = false,
-                    Message = "Trader Cant confirm this transaction"
-                };
-            }
+            // var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            // if (getTrader.Email==getTransaction.BuyerId)
+            // {
+            //     return new BaseResponse()
+            //     {
+            //         IsSuccess = false,
+            //         Message = "Trader Cant confirm this transaction"
+            //     };
+            // }    
             var get = getTransaction.Status = TransactionStatus.isAgreed;
             var updateTransaction = await _transactionRepo.UpdateTransaction(getTransaction);
             if (updateTransaction==null)
@@ -493,8 +487,7 @@ namespace EscrowService.Implementation.Service
             var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
             if (getTrader.Email == getTransaction.BuyerId)
             {
-                var release = getTransactionType.Status = TransactionTypeEnum.IsAccpeted;
-                getTransactionType.IsPaidOut = true;
+                var release = getTransactionType.Status = TransactionTypeEnum.Accpeted;
                 var update = await _transactionTypeRepo.UpdateTransactionType(getTransactionType);
                 if (update==null)
                 {
@@ -579,7 +572,7 @@ namespace EscrowService.Implementation.Service
 
             foreach (var item in getTransactionType)
             {
-                if (item.Status==TransactionTypeEnum.IsActive)
+                if (item.Status==TransactionTypeEnum.Active)
                 {
                     var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
                     if (getTrader.Email==getTransaction.BuyerId)
@@ -640,7 +633,6 @@ namespace EscrowService.Implementation.Service
                     BuyerId = x.BuyerId,
                     TotalPrice = x.TotalPrice,
                     DeliveryAddress = x.DeliveryAddress,
-                    ItemPrice = x.TotalPrice,
                     ItemQuantity = x.ItemQuantity,
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
@@ -679,7 +671,7 @@ namespace EscrowService.Implementation.Service
                     transaction_status = x.Status,
                     BuyerId = x.BuyerId,
                     DeliveryAddress = x.DeliveryAddress,
-                    ItemPrice = x.TotalPrice,
+                    TotalPrice = x.TotalPrice,
                     ItemQuantity = x.ItemQuantity,
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
@@ -718,7 +710,7 @@ namespace EscrowService.Implementation.Service
                     transaction_status = x.Status,
                     BuyerId = x.BuyerId,
                     DeliveryAddress = x.DeliveryAddress,
-                    ItemPrice = x.TotalPrice,
+                    TotalPrice = x.TotalPrice,
                     ItemQuantity = x.ItemQuantity,
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
@@ -757,7 +749,46 @@ namespace EscrowService.Implementation.Service
                     transaction_status = x.Status,
                     BuyerId = x.BuyerId,
                     DeliveryAddress = x.DeliveryAddress,
-                    ItemPrice = x.TotalPrice,
+                    TotalPrice = x.TotalPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public  async Task<TransactionListResponseModel> GetActiveTransactionByTraderEmail(string email)
+        {
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "Trader Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getRejectedTransaction = await _transactionRepo.GetAllActiveTransactionByTraderEmail(email);
+            if (getRejectedTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getRejectedTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    TotalPrice = x.TotalPrice,
                     ItemQuantity = x.ItemQuantity,
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
@@ -796,7 +827,7 @@ namespace EscrowService.Implementation.Service
                     transaction_status = x.Status,
                     BuyerId = x.BuyerId,
                     DeliveryAddress = x.DeliveryAddress,
-                    ItemPrice = x.TotalPrice,
+                    TotalPrice = x.TotalPrice,
                     ItemQuantity = x.ItemQuantity,
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
@@ -826,7 +857,7 @@ namespace EscrowService.Implementation.Service
                     transaction_status = x.Status,
                     BuyerId = x.BuyerId,
                     DeliveryAddress = x.DeliveryAddress,
-                    ItemPrice = x.TotalPrice,
+                    TotalPrice = x.TotalPrice,
                     ItemQuantity = x.ItemQuantity,
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,

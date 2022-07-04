@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using EscrowService.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace EscrowService.DTO
 {
@@ -7,6 +10,8 @@ namespace EscrowService.DTO
     {
         public int Id { get; set; }
         public string Email { get; set; }
+        [EnumDataType(typeof(TransactionStatus))]
+        [JsonConverter(typeof(StringEnumConverter))]
         public Role Role { get; set; }
     }
 
@@ -34,6 +39,7 @@ namespace EscrowService.DTO
         public string Token { get; set; }
         public UserDto Data { get; set; }
         public string Email { get; set; }
+        public string Message { get; set; }
         public bool Status { get; set; }
     }
     public class UserResponseModel : BaseResponse

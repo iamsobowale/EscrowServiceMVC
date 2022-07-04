@@ -27,6 +27,12 @@ namespace EscrowService.Implementation.Repository
             return await _context.TransactionTypes.FirstOrDefaultAsync(x => x.Reference == reference && x.TransactionId == transactionId);
         }
 
+        public async Task<TransactionType> GetTransactionTypeByRefrenceName(string reference)
+        {
+
+            return await _context.TransactionTypes.FirstOrDefaultAsync(x => x.Reference == reference);
+        }
+
         public async Task<TransactionType> CreateTransactionType(TransactionType transactionType)
         {
             _context.TransactionTypes.AddRange(transactionType);

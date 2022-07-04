@@ -30,10 +30,11 @@ namespace EscrowService.Controllers
 
             var response = new UserLoginResponse()
             {
-                Email = _request.Email,
+                Email = login.Data.Email,
                 Token = _jwtauth.GenerateToken(login.Data),
                 Data = login.Data,
-                Status = true
+                Status = true,
+                Message = login.Message
             };
             return Ok(response);
         }

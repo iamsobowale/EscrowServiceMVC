@@ -49,6 +49,12 @@ namespace EscrowService.Implementation.Repository
             return await _context.Transactions.ToListAsync();
         }
 
+        public async Task<IList<Transaction>> GetAllActiveTransactionByTraderEmail(string traderEmail)
+        {
+            return await _context.Transactions.Include(D => D.TradersTransactions).Where(e =>e.Status == TransactionStatus.isActive && e.SellerId == traderEmail).ToListAsync();
+
+        }
+
         public async Task<Transaction> GetTransactionByReferenceNumber(string referenceNumber)
         {
             return await _context.Transactions.Include(C=> C.TransactionTypes).SingleOrDefaultAsync(s => s.ReferenceNumber == referenceNumber);
@@ -68,8 +74,7 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<IList<Transaction>> GetAgreedTransactionByTraderEmail(string email)
         {
-           return await _context.Transactions.Include(c => c.TradersTransactions).Where(c =>
-                c.BuyerId == email || c.SellerId == email && c.Status == TransactionStatus.isAgreed).ToListAsync();
+           return await _context.Transactions.Include(c => c.TradersTransactions).Where(d =>d.Status == TransactionStatus.isAgreed && d.BuyerId == email).ToListAsync();
             
         }
 
@@ -87,7 +92,7 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<IList<Transaction>> GetInitiatedTransactionByTraderEmail(string email)
         {
-           var get = await _context.Transactions.Where(c => c.Status == TransactionStatus.isIntialized && c.BuyerId == email || c.SellerId == email ).ToListAsync();
+           var get = await _context.Transactions.Include(s => s.TradersTransactions).Where(d =>d.Status == TransactionStatus.isIntialized && d.SellerId == email ).ToListAsync();
               return get;
         }
 
