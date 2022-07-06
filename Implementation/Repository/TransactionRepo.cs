@@ -129,7 +129,8 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<IList<Transaction>> GetAllActiveTransaction()
         {
-            return await _context.Transactions.Where(c => c.Status == TransactionStatus.isActive).ToListAsync();
+            var getalltransac =await _context.Transactions.Where(c => c.Status == TransactionStatus.isActive).ToListAsync();
+            return getalltransac;
         }
 
         public async Task<IList<Transaction>> GetAllInitiatedTransaction()
