@@ -133,7 +133,7 @@ namespace EscrowService.Implementation.Service
                 return new BaseResponse
                 {
                     IsSuccess = false,
-                    Message = "Transaction type not found"
+                    Message = "Sub-Transaction not found"
                 };
             }
             getTransactionType.Status = TransactionTypeEnum.Accpeted;
@@ -144,18 +144,36 @@ namespace EscrowService.Implementation.Service
                 return new BaseResponse
                 {
                     IsSuccess = false,
-                    Message = "Transaction type not updated"
+                    Message = "Sub-Transaction not updated"
                 };
             }
             bool isAccepted = updateTransactionType.Status == TransactionTypeEnum.Accpeted;
             return new BaseResponse
             {
                 IsSuccess = isAccepted,
-                Message = "Transaction type Accepted"
+                Message = "Sub-Transaction Accepted"
             };
            
         }
 
+        public async Task<TransactionTypeListResponseModel> GetDeliverSubTransaction(string transactionReferenceNumber)
+        {
+            var getdelievered = await _transactionTypeRepo.GetDeliveredSubTransaction(transactionReferenceNumber);
+            return new TransactionTypeListResponseModel()
+            {
+                Transaction = getdelievered.Select(c => new TransactionTypeServiceDto()
+                {
+                    Description = c.Description,
+                    Name = c.Name,
+                    Price = c.Price,
+                    TransactionReferenceNumber = c.Transaction.ReferenceNumber,
+                    Status = c.Status,
+                    Reference = c.Reference
+                }).ToList(),
+                Message = "Found",
+                IsSuccess = true
+            };
+        }
         public async Task<BaseResponse> RejectSubTransaction(string transactionReferenceNumber)
         {
             var getTransactionType = await _transactionTypeRepo.GetTransactionTypeByRefrenceName(transactionReferenceNumber);
@@ -164,24 +182,43 @@ namespace EscrowService.Implementation.Service
                 return new BaseResponse
                 {
                     IsSuccess = false,
-                    Message = "Transaction type not found"
+                    Message = "TSub-Transaction not found"
                 };
             }
-            getTransactionType.Status = TransactionTypeEnum.Rejected;
+            getTransactionType.Status = TransactionTypeEnum.Active;
             var updateTransactionType = await _transactionTypeRepo.UpdateTransactionType(getTransactionType);
             if (updateTransactionType == null)
             {
                 return new BaseResponse
                 {
                     IsSuccess = false,
-                    Message = "Transaction type not updated"
+                    Message = "Sub-Transaction not updated"
                 };
             }
             bool isRejected = updateTransactionType.Status == TransactionTypeEnum.Rejected;
             return new BaseResponse
             {
                 IsSuccess = isRejected,
-                Message = "Transaction type Rejected"
+                Message = "Sub-TransactionRejected"
+            };
+        }
+
+        public async Task<TransactionTypeListResponseModel> GetAcceptedSubTransaction()
+        {
+            var getdelievered = await _transactionTypeRepo.GetAcceptedSubTransaction();
+            return new TransactionTypeListResponseModel()
+            {
+                Transaction = getdelievered.Select(c => new TransactionTypeServiceDto()
+                {
+                    Description = c.Description,
+                    Name = c.Name,
+                    Price = c.Price,
+                    TransactionReferenceNumber = c.Transaction.ReferenceNumber,
+                    Status = c.Status,
+                    Reference = c.Reference
+                }).ToList(),
+                Message = "Found",
+                IsSuccess = true
             };
         }
     }

@@ -9,6 +9,7 @@ namespace EscrowService.Interface.Service
     {
         Task<BaseResponse> CreateTraderAsync(CreateTraderRequestModel requestModel);
         Task<BaseResponse> UpdateTraderAsync(TraderUpdateRequestModel requestModel, string id);
+        // Task<BaseResponse> UpdateTransaction(UpdateTransaction updateTransaction);
         Task<bool> DeleteTraderAsync(int id);
         Task<TradersResponseModel> GetTraderAsync(int id);
         Task<TraderResponsesModel> GetAllTradersAsync();

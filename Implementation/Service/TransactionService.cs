@@ -721,6 +721,45 @@ namespace EscrowService.Implementation.Service
             };
         }
 
+        public async Task<TransactionListResponseModel> GetProcessingTransactionByTraderEmail(string email)
+        {
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "Trader Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getCompletedTransaction = await _transactionRepo.GetProcessingTransactionByTraderEmail(email);
+            if (getCompletedTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getCompletedTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    TotalPrice = x.TotalPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
         public async Task<TransactionListResponseModel> GetRejectedTransactionByTraderEmail(string email)
         {
             var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
@@ -852,6 +891,126 @@ namespace EscrowService.Implementation.Service
             return new TransactionListResponseModel()
             {
                 TransactionList = getTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    TotalPrice = x.TotalPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TransactionListResponseModel> GetAllProcessingTransaction()
+        {
+            var getAllTransaction = await _transactionRepo.GetAllProcessingTransaction();
+            if (getAllTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getAllTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    TotalPrice = x.TotalPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TransactionListResponseModel> GetAllActiveTransaction()
+        {
+            var getAllTransaction = await _transactionRepo.GetAllActiveTransaction();
+            if (getAllTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getAllTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    TotalPrice = x.TotalPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TransactionListResponseModel> GetAllInitiatedTransaction()
+        {
+            var getAllTransaction = await _transactionRepo.GetAllInitiatedTransaction();
+            if (getAllTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getAllTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    TotalPrice = x.TotalPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<TransactionListResponseModel> GetAllAgreedTransaction()
+        {
+            var getAllTransaction = await _transactionRepo.GetAllAgreedTransaction();
+            if (getAllTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getAllTransaction.Select(x => new TransactionDto()
                 {
                     reference_id = x.ReferenceNumber,
                     transaction_status = x.Status,

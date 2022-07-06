@@ -14,11 +14,13 @@ namespace EscrowService.Implementation.Service
     {
         public readonly ITraderRepo _traderRepo;
         private readonly IUserRepo _userRepo;
+        private readonly ITransactionRepo _transactionRepo;
 
-        public TraderService(ITraderRepo traderRepo, IUserRepo userRepo)
+        public TraderService(ITraderRepo traderRepo, IUserRepo userRepo, ITransactionRepo transactionRepo)
         {
             _traderRepo = traderRepo;
             _userRepo = userRepo;
+            _transactionRepo = transactionRepo;
         }
 
         public async Task<BaseResponse> CreateTraderAsync(CreateTraderRequestModel requestModel)
@@ -100,8 +102,24 @@ namespace EscrowService.Implementation.Service
                     Message = "User Not Found"
                 };
             }
+
+            var gettransaction = await _transactionRepo.GetAllTransactionsByTraderEmail(trader.Email);
+            foreach (var transaction in gettransaction)
+            {
+                if (trader.Email == transaction.BuyerId)
+                {
+                    transaction.BuyerId = requestModel.Email;
+                    await _transactionRepo.UpdateTransaction(transaction);
+                }
+                else
+                {
+                    transaction.SellerId =  requestModel.Email;
+                    await _transactionRepo.UpdateTransaction(transaction);
+                }
+                
+            }
             user.Email = requestModel.Email;
-            user.Password = requestModel.Password;
+            // user.Password = requestModel.Password;
             await _userRepo.UpdateUser(user);
             trader.FirstName = requestModel.FirstName;
             trader.LastName = requestModel.LastName;
@@ -114,6 +132,7 @@ namespace EscrowService.Implementation.Service
             trader.AccountNumber = requestModel.AccountNumber;
             trader.BankName = requestModel.BankName;
             var update = await _traderRepo.UpdateTraderAsync(trader);
+            
             if (update==null)
             {
                 return new BaseResponse()

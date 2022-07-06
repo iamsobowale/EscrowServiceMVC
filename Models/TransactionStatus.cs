@@ -6,6 +6,7 @@ namespace EscrowService.Models
         isAgreed,
         isActive,
         isProcessing,
+        InProgress,
         IsDelivered,
         IsRejected,
         IsCancelled,
@@ -14,4 +15,4 @@ namespace EscrowService.Models
         IsReturnedToSeller, 
         IsCompleted,
     }
-}
+}  

@@ -75,6 +75,21 @@ namespace EscrowService.Implementation.Repository
                 .Sum(c => c.Price);
         }
 
+        public async Task<IList<TransactionType>> GetDeliveredSubTransaction(string transactionReference)
+        {
+            var getsubb =await _context.TransactionTypes.Include(d => d.Transaction).Where(c =>
+                    c.Transaction.ReferenceNumber == transactionReference && c.Status == TransactionTypeEnum.Delivered)
+                .ToListAsync();
+            return getsubb;
+        }
+
+        public  async Task<IList<TransactionType>> GetAcceptedSubTransaction()
+        {
+            var getacceptedSub = await _context.TransactionTypes.Include(c => c.Transaction)
+                .Where(d => d.Status == TransactionTypeEnum.Accpeted).ToListAsync();
+            return getacceptedSub;
+        }
+
         public async Task<IList<TransactionType>> GetAllTransactionTypeByReferenceNumber(int referenceId)
         {
             return await _context.TransactionTypes.Where(x => x.TransactionId == referenceId).ToListAsync();

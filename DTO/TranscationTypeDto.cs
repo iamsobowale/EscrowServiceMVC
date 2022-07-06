@@ -18,6 +18,7 @@ namespace EscrowService.DTO
         [JsonConverter(typeof(StringEnumConverter))]
         public TransactionTypeEnum Status { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string Reference { get; set; }
     }
     public class CreateTransactionTypeServiceDto
     {

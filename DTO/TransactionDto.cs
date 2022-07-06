@@ -32,6 +32,12 @@ namespace EscrowService.DTO
         public IList<CreateTransactionTypeServiceDto> TransactionTypeServices { get; set; }
     }
 
+    public class UpdateTransaction
+    {
+        public string BuyerId { get; set; }
+        public string SellerId { get; set; }
+    }
+
     public class TransactionResponseModel:BaseResponse
     {
         public TransactionDto Transaction { get; set; }

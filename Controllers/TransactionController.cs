@@ -123,7 +123,6 @@ namespace EscrowService.Controllers
 
             return Ok(getTransaction);
         }
-        [Authorize (Roles = "Trader")]
         [HttpPost("ProcessTrasaction")]
         public  async Task<IActionResult> ProcessTrasaction([FromBody]string reference)
         {
@@ -229,6 +228,62 @@ namespace EscrowService.Controllers
               {
                   var get =User.FindFirst(ClaimTypes.Name).Value;
                   var getTransaction = await _transactionService.GetAgreedTransactionByTraderEmail(get);
+                  if (getTransaction.IsSuccess == false)
+                  {
+                      return BadRequest(getTransaction);
+                  }
+
+                  return Ok(getTransaction);
+              }
+              [HttpGet("GetProcessingTransactions")]
+              public async Task<IActionResult> GetProcessingTransactions()
+              {
+                  var get =User.FindFirst(ClaimTypes.Name).Value;
+                  var getTransaction = await _transactionService.GetProcessingTransactionByTraderEmail(get);
+                  if (getTransaction.IsSuccess == false)
+                  {
+                      return BadRequest(getTransaction);
+                  }
+
+                  return Ok(getTransaction);
+              }
+              [HttpGet("GetAllProcessingTransactions")]
+              public async Task<IActionResult> GetAllProcessingTransactions()
+              {
+                  var getTransaction = await _transactionService.GetAllProcessingTransaction();
+                  if (getTransaction.IsSuccess == false)
+                  {
+                      return BadRequest(getTransaction);
+                  }
+
+                  return Ok(getTransaction);
+              }
+              [HttpGet("GetAllActiveTransactions")]
+              public async Task<IActionResult> GetAllActiveTransactions()
+              {
+                  var getTransaction = await _transactionService.GetAllActiveTransaction();
+                  if (getTransaction.IsSuccess == false)
+                  {
+                      return BadRequest(getTransaction);
+                  }
+
+                  return Ok(getTransaction);
+              }
+              [HttpGet("GetAllInitiatedTransaction")]
+              public async Task<IActionResult> GetAllInitiatedTransaction()
+              {
+                  var getTransaction = await _transactionService.GetAllInitiatedTransaction();
+                  if (getTransaction.IsSuccess == false)
+                  {
+                      return BadRequest(getTransaction);
+                  }
+
+                  return Ok(getTransaction);
+              }
+              [HttpGet("GetAllAgreedTransactions")]
+              public async Task<IActionResult> GetAllAgreedTransactions()
+              {
+                  var getTransaction = await _transactionService.GetAllAgreedTransaction();
                   if (getTransaction.IsSuccess == false)
                   {
                       return BadRequest(getTransaction);

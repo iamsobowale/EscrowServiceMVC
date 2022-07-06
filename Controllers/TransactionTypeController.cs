@@ -55,5 +55,26 @@ namespace EscrowService.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet("GetDeliveredSubTransaction/{TransactionReferenceNumber}")]
+        public async Task<IActionResult> GetDeliveredSubTransaction([FromRoute]string transactionReferenceNumber)
+        {
+            var result = await _transactionService.GetDeliverSubTransaction(transactionReferenceNumber);
+            if (result.IsSuccess == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpGet("GetAcceptedSubTransaction")]
+        public async Task<IActionResult> GetDeliveredSubTransaction()
+        {
+            var result = await _transactionService.GetAcceptedSubTransaction();
+            if (result.IsSuccess == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
     }
 }

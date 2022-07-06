@@ -70,7 +70,13 @@ namespace EscrowService.Implementation.Repository
         {
             return await _context.Transactions.SingleOrDefaultAsync(s => s.Status == status);
         }
-        
+
+
+        public async Task<IList<Transaction>> GetProcessingTransactionByTraderEmail(string email)
+        {
+            return await _context.Transactions.Include(D => D.TradersTransactions).Where(e =>e.Status == TransactionStatus.isProcessing && e.BuyerId == email).ToListAsync();
+
+        }
 
         public async Task<IList<Transaction>> GetAgreedTransactionByTraderEmail(string email)
         {
@@ -80,7 +86,7 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<IList<Transaction>> GetAllTransactionsByTraderEmail(string email)
         {
-           var getTransaction = await _context.Transactions.Include(c=>c.TradersTransactions).Where(c =>c.BuyerId==email || c.SellerId==email && c.Status == TransactionStatus.isIntialized ).ToListAsync();
+           var getTransaction = await _context.Transactions.Include(c=>c.TradersTransactions).Where(c =>c.SellerId==email || c.BuyerId==email ).ToListAsync();
            return getTransaction;
         }
 
@@ -114,6 +120,26 @@ namespace EscrowService.Implementation.Repository
         public async Task<IList<Transaction>> GetAllTransactionByTransactionStatus(TransactionStatus status)
         {
             return await _context.Transactions.Where(s => s.Status == status).ToListAsync();
+        }
+
+        public async Task<IList<Transaction>> GetAllProcessingTransaction()
+        {
+            return await _context.Transactions.Where(c => c.Status == TransactionStatus.isProcessing).ToListAsync();
+        }
+
+        public async Task<IList<Transaction>> GetAllActiveTransaction()
+        {
+            return await _context.Transactions.Where(c => c.Status == TransactionStatus.isActive).ToListAsync();
+        }
+
+        public async Task<IList<Transaction>> GetAllInitiatedTransaction()
+        {
+            return await _context.Transactions.Where(c => c.Status == TransactionStatus.isIntialized).ToListAsync();
+        }
+
+        public async Task<IList<Transaction>> GetAllAgreedTransaction()
+        {
+            return await _context.Transactions.Where(c => c.Status == TransactionStatus.isAgreed).ToListAsync();
         }
     }
 }

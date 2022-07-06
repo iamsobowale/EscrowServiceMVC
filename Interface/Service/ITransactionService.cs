@@ -9,7 +9,6 @@ namespace EscrowService.Interface.Service
     {
         public Task<BaseResponse> CreateTransaction(CreateTransactionDto transaction);
         public Task<TransactionResponseModel> GetTransaction(int transactionId);
-
         public Task<TransactionListResponseModel> GetAllTransaction();
         public Task<TransactionResponseModel> GetTransactionByReferenceNumber(string referenceNumber);
         public Task<TransactionListResponseModel> GetAllTransactionsByTraderEmail(string email);
@@ -25,11 +24,16 @@ namespace EscrowService.Interface.Service
         public Task<TransactionListResponseModel> GetInitiatedTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetAgreedTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetCompletedTransactionByTraderEmail(string email);
+        public Task<TransactionListResponseModel> GetProcessingTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetRejectedTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetActiveTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetCancelledTransactionByTraderEmail(string email);
         public Task<TransactionListResponseModel> GetAllTransactionByTransactionStatus(TransactionStatus status);
-        
+        public Task<TransactionListResponseModel> GetAllProcessingTransaction();
+        public Task<TransactionListResponseModel> GetAllActiveTransaction();
+        public Task<TransactionListResponseModel> GetAllInitiatedTransaction();
+        public Task<TransactionListResponseModel> GetAllAgreedTransaction();
+
 
     }
 }

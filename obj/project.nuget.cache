@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "uwQylhrA51LYMOhzlcZ2yaAck7MF7N1Pe3WflDCiDLU9IaUheq45I+G0mhjGQpfcbLl/NN35Vy6H1xvGBFicNA==",
+  "dgSpecHash": "XGtzREXQrUDI0NwtDz5IzlP/8mPD9uZbxy1UVbdhzeSYwy76XfTfg5gX/oakjD91u+PfOBE3ZZyHELiNl8Esqw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\iamso\\Desktop\\Gii\\EscrowServiceMVC\\EscrowService.csproj",
+  "projectFilePath": "C:\\Users\\iamso\\RiderProjects\\EscrowServiceMVC\\EscrowService.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\iamso\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\iamso\\.nuget\\packages\\bouncycastle.netcore\\1.8.5\\bouncycastle.netcore.1.8.5.nupkg.sha512",

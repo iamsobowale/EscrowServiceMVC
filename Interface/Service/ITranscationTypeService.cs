@@ -13,6 +13,8 @@ namespace EscrowService.Interface.Service
         Task<bool> DeleteTransactionType(int id);
         Task<TransactionTypeListResponseModel> GetAllTransactionTypeByReferenceNumber(string transactionId);
         public Task<BaseResponse> AcceptSubTransaction(string transactionReferenceNumber);
+        public Task<TransactionTypeListResponseModel> GetDeliverSubTransaction(string transactionReferenceNumber);
         public Task<BaseResponse> RejectSubTransaction(string transactionReferenceNumber);
+        Task<TransactionTypeListResponseModel> GetAcceptedSubTransaction();
     }
 }

@@ -2341,11 +2341,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\iamso\\Desktop\\Gii\\EscrowServiceMVC\\EscrowService.csproj",
+      "projectUniqueName": "C:\\Users\\iamso\\RiderProjects\\EscrowServiceMVC\\EscrowService.csproj",
       "projectName": "EscrowService",
-      "projectPath": "C:\\Users\\iamso\\Desktop\\Gii\\EscrowServiceMVC\\EscrowService.csproj",
+      "projectPath": "C:\\Users\\iamso\\RiderProjects\\EscrowServiceMVC\\EscrowService.csproj",
       "packagesPath": "C:\\Users\\iamso\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\iamso\\Desktop\\Gii\\EscrowServiceMVC\\obj\\",
+      "outputPath": "C:\\Users\\iamso\\RiderProjects\\EscrowServiceMVC\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\iamso\\AppData\\Roaming\\NuGet\\NuGet.Config"
