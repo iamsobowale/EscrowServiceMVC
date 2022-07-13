@@ -215,7 +215,8 @@ namespace EscrowService.Implementation.Service
                     Price = c.Price,
                     TransactionReferenceNumber = c.Transaction.ReferenceNumber,
                     Status = c.Status,
-                    Reference = c.Reference
+                    Reference = c.Reference,
+                    SellerId = c.Transaction.SellerId
                 }).ToList(),
                 Message = "Found",
                 IsSuccess = true

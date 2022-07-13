@@ -8,6 +8,7 @@ namespace EscrowService.Interface.Service
     {
         public Task<PayStackResponse> CreatePayment(string transactionRefernce, string paymentMethod);
         public Task<BaseResponse> VerifyPayment(string TransactionRefernce);
+        public Task<VerifyBank> VerifyAccountNumber(string sellerEmail);
         public Task<PaymentResponseDto> GetPayment(int paymentId);
         public Task<PaymentResponseDto> GetPaymentByReferenceNumber(string referenceNumber);
         

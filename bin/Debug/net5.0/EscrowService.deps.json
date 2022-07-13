@@ -41,6 +41,7 @@
           "Microsoft.IdentityModel.Tokens": "6.18.0",
           "MySql.EntityFrameworkCore": "5.0.10",
           "Paystack.Net": "0.7.7",
+          "RestSharp": "108.0.2-alpha.0.4",
           "Swashbuckle.AspNetCore": "5.6.3",
           "System.IdentityModel.Tokens.Jwt": "6.18.0",
           "Microsoft.AspNetCore.Antiforgery": "5.0.0.0",
@@ -295,7 +296,7 @@
           "System.Text.Encoding": "5.0.0.0",
           "System.Text.Encoding.Extensions": "5.0.0.0",
           "System.Text.Encodings.Web": "5.0.0.0",
-          "System.Text.Json": "5.0.0.0",
+          "System.Text.Json.Reference": "5.0.0.0",
           "System.Text.RegularExpressions": "5.0.0.0",
           "System.Threading.Channels": "5.0.0.0",
           "System.Threading": "5.0.0.0",
@@ -771,6 +772,20 @@
           "lib/netstandard2.0/PayStack.Net.dll": {}
         }
       },
+      "RestSharp/108.0.2-alpha.0.4": {
+        "dependencies": {
+          "System.Text.Json": "5.0.0"
+        },
+        "runtime": {
+          "lib/net5.0/RestSharp.dll": {
+            "assemblyVersion": "108.0.2.0",
+            "fileVersion": "108.0.2.0"
+          }
+        },
+        "compile": {
+          "lib/net5.0/RestSharp.dll": {}
+        }
+      },
       "Swashbuckle.AspNetCore/5.6.3": {
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "3.0.0",
@@ -904,6 +919,7 @@
           "Microsoft.NETCore.Platforms": "3.1.0"
         }
       },
+      "System.Text.Json/5.0.0": {},
       "System.Windows.Extensions/4.7.0": {
         "dependencies": {
           "System.Drawing.Common": "4.7.0"
@@ -2421,7 +2437,7 @@
         },
         "compileOnly": true
       },
-      "System.Text.Json/5.0.0.0": {
+      "System.Text.Json.Reference/5.0.0.0": {
         "compile": {
           "System.Text.Json.dll": {}
         },
@@ -2890,6 +2906,13 @@
       "path": "paystack.net/0.7.7",
       "hashPath": "paystack.net.0.7.7.nupkg.sha512"
     },
+    "RestSharp/108.0.2-alpha.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kT3Fu+JVvCUNh8SFAAvDqM9x8s5Xy1i2q9Ze7jt6mFhzfsJcU68c1OV47l+64i1V+7Pda0+VWuroCZ62EyJb7Q==",
+      "path": "restsharp/108.0.2-alpha.0.4",
+      "hashPath": "restsharp.108.0.2-alpha.0.4.nupkg.sha512"
+    },
     "Swashbuckle.AspNetCore/5.6.3": {
       "type": "package",
       "serviceable": true,
@@ -3022,6 +3045,13 @@
       "sha512": "sha512-6JX7ZdaceBiLKLkYt8zJcp4xTJd1uYyXXEkPw6mnlUIjh1gZPIVKPtRXPmY5kLf6DwZmf5YLwR3QUrRonl7l0A==",
       "path": "system.text.encoding.codepages/4.4.0",
       "hashPath": "system.text.encoding.codepages.4.4.0.nupkg.sha512"
+    },
+    "System.Text.Json/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+luxMQNZ2WqeffBU7Ml6njIvxc8169NW2oU+ygNudXQGZiarjE7DOtN7bILiQjTZjkmwwRZGTtLzmdrSI/Ustw==",
+      "path": "system.text.json/5.0.0",
+      "hashPath": "system.text.json.5.0.0.nupkg.sha512"
     },
     "System.Windows.Extensions/4.7.0": {
       "type": "package",
@@ -4290,7 +4320,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "System.Text.Json/5.0.0.0": {
+    "System.Text.Json.Reference/5.0.0.0": {
       "type": "referenceassembly",
       "serviceable": false,
       "sha512": ""

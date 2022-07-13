@@ -184,3 +184,4 @@ C:\Users\iamso\RiderProjects\EscrowServiceMVC\obj\Debug\net5.0\EscrowService.dll
 C:\Users\iamso\RiderProjects\EscrowServiceMVC\obj\Debug\net5.0\ref\EscrowService.dll
 C:\Users\iamso\RiderProjects\EscrowServiceMVC\obj\Debug\net5.0\EscrowService.pdb
 C:\Users\iamso\RiderProjects\EscrowServiceMVC\obj\Debug\net5.0\EscrowService.genruntimeconfig.cache
+C:\Users\iamso\RiderProjects\EscrowServiceMVC\bin\Debug\net5.0\RestSharp.dll

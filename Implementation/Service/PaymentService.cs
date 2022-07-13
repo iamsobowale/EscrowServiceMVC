@@ -22,13 +22,14 @@ namespace EscrowService.Implementation.Service
         private readonly IPaymentRepo _paymentRepo;
         private readonly ITransactionRepo _transactionRepo;
         private readonly IPaymentMethodRepo _paymentMethodRepo;
+        private readonly ITraderRepo _traderRepo;
 
-        public PaymentService(IPaymentRepo paymentRepo, ITransactionRepo transactionRepo,
-            IPaymentMethodRepo paymentMethodRepo)
+        public PaymentService(IPaymentRepo paymentRepo, ITransactionRepo transactionRepo, IPaymentMethodRepo paymentMethodRepo, ITraderRepo traderRepo)
         {
             _paymentRepo = paymentRepo;
             _transactionRepo = transactionRepo;
             _paymentMethodRepo = paymentMethodRepo;
+            _traderRepo = traderRepo;
         }
 
         public async Task<PayStackResponse> CreatePayment(string transactionReference, string paymentMethod)
@@ -147,6 +148,8 @@ namespace EscrowService.Implementation.Service
                     {
                         getPayment.Status = PaymentStatus.Success;
                         getPayment.PaymentDate = DateTime.UtcNow;
+                        getTransactionReference.Transaction.Status = TransactionStatus.isActive;
+                        var updatetransaction = await _transactionRepo.UpdateTransaction(getTransactionReference.Transaction);
                         var result = await _paymentRepo.UpdatePayment(getPayment);
                         if (result==null)
                         {
@@ -159,26 +162,75 @@ namespace EscrowService.Implementation.Service
                         return new BaseResponse
                         {
                             IsSuccess = true,
-                            Message = "Payment Already Verified"
+                            Message = "Payment Verified"
                         };
                     }
-                    else
+                    return new BaseResponse
                     {
-                        return new BaseResponse
-                        {
-                            IsSuccess = false,
-                            Message = "Verification Failed"
-                        };
-                    }
+                        IsSuccess = false,
+                        Message = "Payment Already Verified"
+                    };
                 }
             }
            
             return new BaseResponse
             {
                 IsSuccess = false,
-                Message = "Payment Failed"
+                Message = "Verification Failed"
             };
             
+        }
+
+        public async Task<VerifyBank> VerifyAccountNumber(string sellerEmail)
+        {
+
+            var getSeller = await _traderRepo.GetTraderByEmailAsync(sellerEmail);
+            if (getSeller == null)
+            {
+                return new VerifyBank()
+                {
+                    status = false,
+                    message = "Seller not found"
+                };
+            }
+
+            var getHttpClient = new HttpClient();
+            getHttpClient.DefaultRequestHeaders.Accept.Clear();
+            getHttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var baseUri = getHttpClient.BaseAddress =
+                new Uri($"https://api.paystack.co/bank/resolve?account_number={"0208621435"}&bank_code={"058"}");
+            // "https://api.paystack.co/bank?country=nigeria"
+            //$"https://api.paystack.co/bank/resolve?account_number={0238243181}&bank_code={035}"
+            getHttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", "sk_test_6483775b59a2152f947af8583a987e98eb5c7af2");
+            var response =
+                await getHttpClient.GetAsync(baseUri);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<VerifyBank>(responseString);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                
+                if (responseObject.status)
+                {
+                    return new VerifyBank()
+                    {
+                        status = true,
+                        message =responseObject.message,
+                        data = new VerifyBankData()
+                        {
+                            account_name = responseObject.data.account_name,
+                            account_number = responseObject.data.account_number,
+                            bank_id = responseObject.data.bank_id,
+                        }
+
+                    };
+                }
+            }
+            return new VerifyBank()
+            {
+                status = false,
+                message = responseObject.message
+            };
         }
 
         public async Task<PaymentResponseDto> GetPayment(int paymentId)
@@ -315,21 +367,6 @@ namespace EscrowService.Implementation.Service
         {
             throw new System.NotImplementedException();
         }
-
-        // public async Task<string> MakePaymentWithPaystack(string clientid, string secretkey)
-        // {
-        //     var request = new HttpRequestMessage(HttpMethod.Post, "token");
-        //     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientid}:{secretkey}")));
-        //     request.Content = new FormUrlEncodedContent((new Dictionary<string, string>
-        //     {
-        //         { "grant_type", "client_credentials" }
-        //     }));
-        //     var response = await _httpClient.SendAsync(request);
-        //     response.EnsureSuccessStatusCode();
-        //     var responseBody = await response.Content.ReadAsStreamAsync();
-        //     var authResponse = await JsonSerializer.Create().Deserialize<>(responseBody);
-        //
-        // }
 
         private decimal SetAmount(decimal amount)
         {

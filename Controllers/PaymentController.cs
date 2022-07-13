@@ -28,17 +28,27 @@ namespace EscrowService.Controllers
             var paymentId = await _paymentService.CreatePayment(transactionId.Transaction.reference_id, paymentMethodId.PaymentMethod.PaymentMethodName);
             if (paymentId.status == false)
             {
-                return BadRequest(paymentId.message);
+                return BadRequest(paymentId);
             }
-            return Ok(paymentId.data);
+            return Ok(paymentId);
         }
-        [HttpGet("VerifyPayment")]
-        public async Task<IActionResult> VerifyPayment([FromBody]string transactionReference)
+        [HttpGet("VerifyPayment/{transactionReference}")]
+        public async Task<IActionResult> VerifyPayment([FromRoute]string transactionReference)
         {
             var paymentId = await _paymentService.VerifyPayment(transactionReference);
             if (paymentId.IsSuccess == false)
             {
-                return BadRequest(paymentId.Message);
+                return BadRequest(paymentId);
+            }
+            return Ok(paymentId);
+        }
+        [HttpGet("VerifyAccountNumber")]
+        public async Task<IActionResult> VerifyAccountNumber(string transactionReference)
+        {
+            var paymentId = await _paymentService.VerifyAccountNumber(transactionReference);
+            if (paymentId.status == false)
+            {
+                return BadRequest(paymentId);
             }
             return Ok(paymentId);
         }

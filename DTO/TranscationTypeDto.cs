@@ -13,6 +13,7 @@ namespace EscrowService.DTO
         public string  TransactionReferenceNumber { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string SellerId { get; set; }
         public decimal Price { get; set; }
         [EnumDataType(typeof(TransactionStatus))]
         [JsonConverter(typeof(StringEnumConverter))]
