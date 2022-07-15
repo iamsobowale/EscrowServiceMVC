@@ -27,6 +27,7 @@ namespace EscrowService.Interface.Repository
         public Task<IList<Transaction>> GetAllActiveTransaction();
         public Task<IList<Transaction>> GetAllInitiatedTransaction();
         public Task<IList<Transaction>> GetAllAgreedTransaction();
+        public Task<Transaction> GetTransactionBySubtransactionReference(string subTransactionReference);
         
 
 

@@ -3,14 +3,16 @@ using System;
 using EscrowService.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EscrowService.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220704150830_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -289,8 +291,8 @@ namespace EscrowService.Migrations
                     b.Property<string>("AccountName")
                         .HasColumnType("text");
 
-                    b.Property<string>("AccountNumber")
-                        .HasColumnType("text");
+                    b.Property<int>("AccountNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("AddressLine1")
                         .HasColumnType("text");
