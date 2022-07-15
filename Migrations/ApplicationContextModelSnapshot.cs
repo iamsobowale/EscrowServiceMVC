@@ -289,8 +289,8 @@ namespace EscrowService.Migrations
                     b.Property<string>("AccountName")
                         .HasColumnType("text");
 
-                    b.Property<int>("AccountNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("text");
 
                     b.Property<string>("AddressLine1")
                         .HasColumnType("text");

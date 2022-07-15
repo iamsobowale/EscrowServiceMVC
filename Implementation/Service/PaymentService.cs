@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -23,13 +24,15 @@ namespace EscrowService.Implementation.Service
         private readonly ITransactionRepo _transactionRepo;
         private readonly IPaymentMethodRepo _paymentMethodRepo;
         private readonly ITraderRepo _traderRepo;
+        private readonly ITransactionTypeRepo _transactionType;
 
-        public PaymentService(IPaymentRepo paymentRepo, ITransactionRepo transactionRepo, IPaymentMethodRepo paymentMethodRepo, ITraderRepo traderRepo)
+        public PaymentService(IPaymentRepo paymentRepo, ITransactionRepo transactionRepo, IPaymentMethodRepo paymentMethodRepo, ITraderRepo traderRepo, ITransactionTypeRepo transactionType)
         {
             _paymentRepo = paymentRepo;
             _transactionRepo = transactionRepo;
             _paymentMethodRepo = paymentMethodRepo;
             _traderRepo = traderRepo;
+            _transactionType = transactionType;
         }
 
         public async Task<PayStackResponse> CreatePayment(string transactionReference, string paymentMethod)
@@ -181,10 +184,11 @@ namespace EscrowService.Implementation.Service
             
         }
 
-        public async Task<VerifyBank> VerifyAccountNumber(string sellerEmail)
+        public async Task<VerifyBank> VerifyAccountNumber(string subTransaction)
         {
-
-            var getSeller = await _traderRepo.GetTraderByEmailAsync(sellerEmail);
+            var getsubTransaction = await _transactionType.GetTransactionTypeByRefrenceName(subTransaction);
+            var getSubTransaction = await _transactionRepo.GetTransaction(getsubTransaction.TransactionId);
+            var getSeller = await _traderRepo.GetTraderByEmailAsync(getSubTransaction.SellerId);
             if (getSeller == null)
             {
                 return new VerifyBank()
@@ -198,9 +202,8 @@ namespace EscrowService.Implementation.Service
             getHttpClient.DefaultRequestHeaders.Accept.Clear();
             getHttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var baseUri = getHttpClient.BaseAddress =
-                new Uri($"https://api.paystack.co/bank/resolve?account_number={"0208621435"}&bank_code={"058"}");
+                new Uri($"https://api.paystack.co/bank/resolve?account_number={getSeller.AccountNumber}&bank_code={"058"}");
             // "https://api.paystack.co/bank?country=nigeria"
-            //$"https://api.paystack.co/bank/resolve?account_number={0238243181}&bank_code={035}"
             getHttpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", "sk_test_6483775b59a2152f947af8583a987e98eb5c7af2");
             var response =
@@ -209,29 +212,151 @@ namespace EscrowService.Implementation.Service
             var responseObject = JsonConvert.DeserializeObject<VerifyBank>(responseString);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                
-                if (responseObject.status)
+                if (!responseObject.status)
                 {
                     return new VerifyBank()
                     {
-                        status = true,
-                        message =responseObject.message,
-                        data = new VerifyBankData()
-                        {
-                            account_name = responseObject.data.account_name,
-                            account_number = responseObject.data.account_number,
-                            bank_id = responseObject.data.bank_id,
-                        }
-
+                        status = false,
+                        message = responseObject.message
                     };
                 }
+
+                if (responseObject.data.account_number != getSeller.AccountNumber || responseObject.data.account_name !=
+                    getSeller.LastName.ToUpper() + " " + getSeller.FirstName.ToUpper() + " " + "GANIU")
+                {
+                    return new VerifyBank()
+                    {
+                        status = false,
+                        message = "Account number and name does not match"
+                    };
+                }
+
+                var generate = await GenerateRecipients(responseObject);
+                if (!generate.status)
+                {
+                    return new VerifyBank()
+                    {
+                        status = false,
+                        message = generate.message
+                    };
+                }
+
+                var makeTransfer = await MakeTransfer(getsubTransaction.Price, generate.data.recipient_code);
+                if (!makeTransfer.status)
+                {
+                    return new VerifyBank()
+                    {
+                        status = false,
+                        message = makeTransfer.message
+                    };
+                }
+                return new VerifyBank()
+                {
+                    status = true,
+                    message = makeTransfer.message,
+                    data = new VerifyBankData()
+                    {
+                        reason = generate.data.reason,
+                        reference = generate.data.reference,
+                        recipient_code = generate.data.recipient_code,
+                        amount = makeTransfer.data.amount,
+                        currency = makeTransfer.data.currency,
+                        status = makeTransfer.data.status,
+                        transfer_code = makeTransfer.data.transfer_code
+                    }
+                };
             }
+
             return new VerifyBank()
+            {
+                status = false,
+                message = "Cannot verify account number"
+            };
+            
+        }
+
+        public async Task<GenerateRecipient> GenerateRecipients(VerifyBank verifyBank)
+        {
+            var getHttpClient = new HttpClient();
+            getHttpClient.DefaultRequestHeaders.Accept.Clear();
+            getHttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var baseUri = getHttpClient.BaseAddress = new Uri($"https://api.paystack.co/transferrecipient");
+            getHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_6483775b59a2152f947af8583a987e98eb5c7af2");
+            var response = await getHttpClient.PostAsJsonAsync(baseUri, new
+            {
+                type = "nuban",
+                name = verifyBank.data.account_name,
+                account_number = verifyBank.data.account_number,
+                bank_code = "058",
+                currency = "NGN",
+            });
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<GenerateRecipient>(responseString);
+            if (response.StatusCode == System.Net.HttpStatusCode.Created)
+            {
+                if (!responseObject.status)
+                {
+                    return new GenerateRecipient()
+                    {
+                        status = false,
+                        message = responseObject.message
+                    };
+                }
+                return new GenerateRecipient()
+                {
+                    status = true,
+                    message = "Recipient Generated",
+                    data = responseObject.data
+                };
+            }
+            return new GenerateRecipient()
             {
                 status = false,
                 message = responseObject.message
             };
         }
+
+        public async Task<MakeATransfer> MakeTransfer(decimal amounts, string recipientId)
+        {
+            var getHttpClient = new HttpClient();
+            getHttpClient.DefaultRequestHeaders.Accept.Clear();
+            getHttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var baseUri = getHttpClient.BaseAddress = new Uri($"https://api.paystack.co/transfer");
+            getHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "sk_test_6483775b59a2152f947af8583a987e98eb5c7af2");
+            var response = await getHttpClient.PostAsJsonAsync(baseUri, new
+            {
+                
+                recipient = recipientId,
+                amount = amounts * 100,
+                currency = "NGN",
+                source = "balance"
+            });
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<MakeATransfer>(responseString);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                if (!responseObject.status)
+                {
+                    return new MakeATransfer()
+                    {
+                        status = false,
+                        message = responseObject.message
+                    };
+                }
+                return new MakeATransfer()
+                {
+                    status = true,
+                    message = responseObject.message,
+                    data = responseObject.data
+                };
+            }
+            return new MakeATransfer()
+            {
+                status = false,
+                message = responseObject.message
+            };
+        }
+
 
         public async Task<PaymentResponseDto> GetPayment(int paymentId)
         {

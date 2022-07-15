@@ -142,5 +142,10 @@ namespace EscrowService.Implementation.Repository
         {
             return await _context.Transactions.Where(c => c.Status == TransactionStatus.isAgreed).ToListAsync();
         }
+
+        public async Task<Transaction> GetTransactionBySubtransactionReference(string subTransactionReference)
+        {
+            return await _context.Transactions.SingleOrDefaultAsync(s => s.TransactionTypes.Any(c => c.Reference== subTransactionReference));
+        }
     }
 }
