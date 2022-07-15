@@ -63,8 +63,9 @@ namespace EscrowService
             services.AddCors(a => a.AddPolicy("CorsPolicy", builder =>
             {
                 builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowAnyOrigin();
             }));
 
             var key = "This is the key that we are going to be using to authorize our user";
@@ -116,7 +117,7 @@ namespace EscrowService
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseRouting();
-            app.UseAuthorization();  
+            app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

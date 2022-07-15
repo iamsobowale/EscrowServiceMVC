@@ -38,7 +38,8 @@ namespace EscrowService.Controllers
         [HttpPut("UpdateTrader")]
         public async Task<IActionResult> UpdateTrader([FromBody]TraderUpdateRequestModel request)
         {
-            var result = await _traderService.UpdateTraderAsync(request, request.id);
+            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var result = await _traderService.UpdateTraderAsync(request, get);
             return Ok(result);
         }
         [HttpDelete("DeleteTrader")]

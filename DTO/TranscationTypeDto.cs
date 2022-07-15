@@ -13,7 +13,7 @@ namespace EscrowService.DTO
         public string  TransactionReferenceNumber { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string SellerId { get; set; }
+        public string SellerId                             { get; set; }
         public decimal Price { get; set; }
         [EnumDataType(typeof(TransactionStatus))]
         [JsonConverter(typeof(StringEnumConverter))]
@@ -24,12 +24,11 @@ namespace EscrowService.DTO
     public class CreateTransactionTypeServiceDto
     {
         public string Name { get; set; }
+        public string TransactionReferenceNumber { get; set; }
         public string Description { get; set; }
         public int DeliveryDate { get; set; }
         public decimal Price { get; set; }
-        public bool IsPaidOut { get; set; } = false;
-        public DateTime CreatedDate { get; set; }
-        
+
     }
     public class UpdateTransactionTypeServiceDto
     {

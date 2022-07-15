@@ -29,7 +29,7 @@ namespace EscrowService.Controllers
             var response = await _adminService.GetAdminAsync(id);
             return Ok(response);
         }
-        [Authorize]
+        
         [HttpGet("GetAllAdmin")]
         public async Task<IActionResult> GetAllAdmin()
         {
@@ -37,15 +37,15 @@ namespace EscrowService.Controllers
             return Ok(response);
         }
         [HttpPut("UpdateAdmin")]
-        public async Task<IActionResult> UpdateAdmin(UpdateAdminRequestModel _request, int id)
+        public async Task<IActionResult> UpdateAdmin(UpdateAdminRequestModel _request)
         {
-            var response = await _adminService.UpdateAdminAsync(_request, id);
+            var response = await _adminService.UpdateAdminAsync(_request, _request.Email);
             return Ok(response);
         }
         [HttpDelete("DeleteAdmin")]
-        public async Task<IActionResult> DeleteAdmin(int id)
+        public async Task<IActionResult> DeleteAdmin(string email)
         {
-            var response = await _adminService.DeleteAdminAsync(id);
+            var response = await _adminService.DeleteAdminAsync(email);
             return Ok(response);
         }
         [HttpGet("GetAdminByEmail")]

@@ -21,6 +21,16 @@ namespace EscrowService.Implementation.Service
 
         public async Task<BaseResponse> CreateAdminAsync(CreateAdminRequestModel requestModel)
         {
+            //check email if exist
+            var get = await _userRepo.EmailExistsAsync(requestModel.Email);
+            if (get)
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = "Email already exists"
+                };
+            }
             var genertateId = $"AdminId{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 5).ToUpper()}";
             var user = new User
             {
@@ -34,6 +44,7 @@ namespace EscrowService.Implementation.Service
                 UserId = user.Id,
                 User = user,
                 FirstName = requestModel.FirstName,
+                AddressLine1 = requestModel.Address,
                 LastName = requestModel.LastName,
                 PhoneNumber = requestModel.PhoneNumber,
                 City = requestModel.City,
@@ -61,9 +72,9 @@ namespace EscrowService.Implementation.Service
             };
         }
 
-        public async Task<BaseResponse> UpdateAdminAsync(UpdateAdminRequestModel requestModel, int id)
+        public async Task<BaseResponse> UpdateAdminAsync(UpdateAdminRequestModel requestModel, string email)
         {
-            var admin = await _adminRepository.GetAdminAsync(id);
+            var admin = await _adminRepository.GetAdminByEmailAsync(email);
             if (admin == null)
             {
                 return new BaseResponse()
@@ -86,6 +97,7 @@ namespace EscrowService.Implementation.Service
             admin.LastName = requestModel.LastName;
             admin.PhoneNumber = requestModel.PhoneNumber;
             admin.City = requestModel.City;
+            admin.AddressLine1 = requestModel.Address;
             admin.State = requestModel.State;
             admin.Email = requestModel.Email;
             admin.Password = requestModel.Password;
@@ -104,15 +116,16 @@ namespace EscrowService.Implementation.Service
             };
         }
 
-        public async Task<bool> DeleteAdminAsync(int id)
+        public async Task<bool> DeleteAdminAsync(string email)
         {
-           var getAdmin =await _adminRepository.GetAdminAsync(id);
+           var getAdmin =await _adminRepository.GetAdminByEmailAsync(email);
            if (getAdmin == null)
            {
                return false;
            }
-           getAdmin.IsDeleted = true;
-           var deleteAdmin = await _adminRepository.UpdateAdminAsync(getAdmin);
+           var deleteAdmin = await _adminRepository.DeleteAdminAsync(getAdmin);
+           // getAdmin.IsDeleted = true;
+           // var delteAdmin = await _adminRepository.UpdateAdminAsync(getAdmin);
             if (deleteAdmin == null)
             {
                 return false;
@@ -160,6 +173,7 @@ namespace EscrowService.Implementation.Service
                 Message = "Admins found",
                 Admin = getAdmins.Select(s => new AdminDto()
                 {
+                    Id = s.UserId,
                     FirstName = s.FirstName,
                     AdminId = s.AdminId,
                     LastName = s.LastName,
@@ -190,6 +204,7 @@ namespace EscrowService.Implementation.Service
                    Id = getAdmin.Id,
                    FirstName = getAdmin.FirstName,
                    LastName = getAdmin.LastName,
+                   Address = getAdmin.AddressLine1,
                    PhoneNumber = getAdmin.PhoneNumber,
                    City = getAdmin.City,
                    State = getAdmin.State,

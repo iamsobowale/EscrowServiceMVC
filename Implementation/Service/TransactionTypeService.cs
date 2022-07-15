@@ -15,6 +15,7 @@ namespace EscrowService.Implementation.Service
     {
         private readonly ITransactionTypeRepo _transactionTypeRepo;
         private readonly ITransactionRepo _transactionRepo;
+        
 
         public TransactionTypeService(ITransactionTypeRepo transactionTypeRepo, ITransactionRepo transactionRepo)
         {
@@ -32,53 +33,56 @@ namespace EscrowService.Implementation.Service
             throw new System.NotImplementedException();
         }
 
-        public async Task<BaseResponse> CreateTransactionType(IList<CreateTransactionTypeServiceDto> transactionType, string transactionReferenceNumber)
+        public async Task<BaseResponse> CreateTransactionType(CreateTransactionTypeServiceDto transactionType)
         {
-            var getTransction = await _transactionRepo.GetTransactionByReferenceNumber(transactionReferenceNumber);
-            if (getTransction == null)
-            {
-                return new BaseResponse
+            var generateReferencenumber = $"Ref{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 5).ToUpper()}";
+        
+           
+               var getTransction = await _transactionRepo.GetTransactionByReferenceNumber(transactionType.TransactionReferenceNumber);
+                if (getTransction == null)
                 {
-                    IsSuccess = false,
-                    Message = "Transaction not found"
-                };
-            }
-            if (getTransction.TransactionTypes.Count==5)
-            {
-                return new BaseResponse
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Transaction not found"
+                    };
+                }
+                
+                if (getTransction.TransactionTypes.Count>=5)
                 {
-                    IsSuccess = false,
-                    Message = "You can't add more than 5 transaction types"
-                };
-            }
-            var createTransactionTypes = new TransactionType()
-            {
-                Name = transactionType[0].Name,
-                Description = transactionType[0].Description,
-                CreatedDate = DateTime.Now,
-                TransactionId = getTransction.Id,
-                Price = transactionType[0].Price
-            };
-            var createTransactionType = _transactionTypeRepo.CreateTransactionType(createTransactionTypes);
-            if (createTransactionType == null)
-            {
-                return new BaseResponse
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Transaction type limit reached"
+                    };
+                }
+                var createTransactionTypes = new TransactionType()
                 {
-                    IsSuccess = false,
-                    Message = "Transaction type not created"
+                    Reference = generateReferencenumber,
+                    Name = transactionType.Name,
+                    Description = transactionType.Description,
+                    Status = TransactionTypeEnum.Active,
+                    CreatedDate = DateTime.Now,
+                    DeliveryDate = DateTime.Now.AddDays(transactionType.DeliveryDate),
+                    TransactionId = getTransction.Id,
+                    Price = transactionType.Price,
                 };
-            }
-            var sum = transactionType.Sum(x => x.Price);
-            getTransction.TotalPrice = sum;
-            var updateTransaction = _transactionRepo.UpdateTransaction(getTransction);
-            if (updateTransaction == null)
-            {
-                return new BaseResponse
+                var createTransactionType = await _transactionTypeRepo.CreateTransactionType(createTransactionTypes);
+               
+                if (createTransactionType == null)
                 {
-                    IsSuccess = false,
-                    Message = "Transaction not updated"
-                };
-            }
+                    return new BaseResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Transaction item failed to add"
+                    };
+                }
+            
+            var sum = transactionType.Price;
+            getTransction.TotalPrice += sum;
+            var updateTransaction =await _transactionRepo.UpdateTransaction(getTransction);
+                
+            
             return new BaseResponse
             {
                 IsSuccess = true,
@@ -222,5 +226,62 @@ namespace EscrowService.Implementation.Service
                 IsSuccess = true
             };
         }
+
+        public async Task<BaseResponse> MakeSubTransactionDone(string transactionReferenceNumber)
+        {
+            var getTransactionType = await _transactionTypeRepo.GetTransactionTypeByRefrenceName(transactionReferenceNumber);
+            if (getTransactionType == null)
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = "Sub-Transaction not found"
+                };
+            }
+            getTransactionType.Status = TransactionTypeEnum.Delivered;
+            var updateTransactionType = await _transactionTypeRepo.UpdateTransactionType(getTransactionType);
+            if (updateTransactionType == null)
+            {
+                return new BaseResponse
+                {
+                    IsSuccess = false,
+                    Message = "Sub-Transaction not updated"
+                };
+            }
+            return new BaseResponse
+            {
+                IsSuccess = true,
+                Message = "Sub-Transaction Delivered"
+            };
+        }
+
+        public async Task<TransactionTypeListResponseModel> GetSubTransactionByTransactionRef(string transactionReference)
+        {
+            
+            var getdelievered = await _transactionTypeRepo.GetSubTransactionByTransactionRef(transactionReference);
+            if (getdelievered == null)
+            {
+                return new TransactionTypeListResponseModel()
+                {
+                    Message = "Sub-Transaction not found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionTypeListResponseModel()
+            {
+                Transaction = getdelievered.Select(c => new TransactionTypeServiceDto()
+                {
+                    Description = c.Description,
+                    Name = c.Name,
+                    Price = c.Price,
+                    TransactionReferenceNumber = c.Transaction.ReferenceNumber,
+                    Status = c.Status,
+                    Reference = c.Reference
+                }).ToList(),
+                Message = "Found",
+                IsSuccess = true
+            };
+        }
+        
     }
 }

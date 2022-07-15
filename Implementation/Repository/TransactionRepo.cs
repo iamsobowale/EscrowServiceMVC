@@ -31,7 +31,7 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<Transaction> UpdateTransaction(Transaction transaction)
         {
-            _context.Transactions.Update(transaction);
+           _context.Transactions.Update(transaction);
             await _context.SaveChangesAsync();
             return transaction;
         }
@@ -46,106 +46,116 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<IList<Transaction>> GetAllTransaction()
         {
-            return await _context.Transactions.ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).ToListAsync();
         }
 
         public async Task<IList<Transaction>> GetAllActiveTransactionByTraderEmail(string traderEmail)
         {
-            return await _context.Transactions.Include(D => D.TradersTransactions).Where(e =>e.Status == TransactionStatus.isActive && e.SellerId == traderEmail).ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).Include(D => D.TradersTransactions).Where(e =>e.Status == TransactionStatus.isActive && e.SellerId == traderEmail).ToListAsync();
 
         }
 
         public async Task<Transaction> GetTransactionByReferenceNumber(string referenceNumber)
         {
-            return await _context.Transactions.Include(C=> C.TransactionTypes).SingleOrDefaultAsync(s => s.ReferenceNumber == referenceNumber);
+            return await _context.Transactions.Include(d => d.TransactionTypes).Include(C=> C.TransactionTypes).SingleOrDefaultAsync(s => s.ReferenceNumber == referenceNumber);
         }
         
         public async Task<IList<Transaction>> GetAllTradersInTransaction(string referenceNumber)
         {
-            var getTransaction = await _context.Transactions.Include(c=>c.TradersTransactions).Where(c =>c.BuyerId==referenceNumber && c.SellerId==referenceNumber ).ToListAsync();
+            var getTransaction = await _context.Transactions.Include(d => d.TransactionTypes).Include(c=>c.TradersTransactions).Where(c =>c.BuyerId==referenceNumber && c.SellerId==referenceNumber ).ToListAsync();
             return getTransaction;
         }
 
         public async Task<Transaction> GetTransactionByTransactionStatus(TransactionStatus status)
         {
-            return await _context.Transactions.SingleOrDefaultAsync(s => s.Status == status);
+            return await _context.Transactions.Include(d => d.TransactionTypes).SingleOrDefaultAsync(s => s.Status == status);
         }
 
 
         public async Task<IList<Transaction>> GetProcessingTransactionByTraderEmail(string email)
         {
-            return await _context.Transactions.Include(D => D.TradersTransactions).Where(e =>e.Status == TransactionStatus.isProcessing && e.BuyerId == email).ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).Include(D => D.TradersTransactions).Where(e =>e.Status == TransactionStatus.isProcessing && e.BuyerId == email).ToListAsync();
 
+        }
+
+        public async Task<IList<Transaction>> GetProcessingTransactionByTraderEmailSeller(string email)
+        {
+            return await _context.Transactions.Include(d => d.TransactionTypes).Include(D => D.TradersTransactions).Where(e =>e.Status == TransactionStatus.isProcessing && e.SellerId == email).ToListAsync();
         }
 
         public async Task<IList<Transaction>> GetAgreedTransactionByTraderEmail(string email)
         {
-           return await _context.Transactions.Include(c => c.TradersTransactions).Where(d =>d.Status == TransactionStatus.isAgreed && d.BuyerId == email).ToListAsync();
+           return await _context.Transactions.Include(d => d.TransactionTypes).Include(c => c.TradersTransactions).Where(d =>d.Status == TransactionStatus.isAgreed && d.BuyerId == email).ToListAsync();
             
         }
 
         public async Task<IList<Transaction>> GetAllTransactionsByTraderEmail(string email)
         {
-           var getTransaction = await _context.Transactions.Include(c=>c.TradersTransactions).Where(c =>c.SellerId==email || c.BuyerId==email ).ToListAsync();
+           var getTransaction = await _context.Transactions.Include(d => d.TransactionTypes).Include(d => d.TransactionTypes).Include(c=>c.TradersTransactions).Where(c =>c.SellerId==email || c.BuyerId==email ).ToListAsync();
            return getTransaction;
         }
 
 
         public async Task<IList<Transaction>> GetAllTransactionByTransactionStatus(TransactionStatus status, string email)
         {
-            return await _context.Transactions.Where(s => s.Status == status && s.BuyerId == email || s.SellerId == email).ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).Include(d => d.TransactionTypes).Where(s => s.Status == status && s.BuyerId == email || s.SellerId == email).ToListAsync();
         }
 
         public async Task<IList<Transaction>> GetInitiatedTransactionByTraderEmail(string email)
         {
-           var get = await _context.Transactions.Include(s => s.TradersTransactions).Where(d =>d.Status == TransactionStatus.isIntialized && d.SellerId == email ).ToListAsync();
+           var get = await _context.Transactions.Include(d => d.TransactionTypes).Include(s => s.TradersTransactions).Where(d =>d.Status == TransactionStatus.isIntialized && d.SellerId == email ).ToListAsync();
               return get;
         }
 
         public async Task<IList<Transaction>> GetCompletedTransactionByTraderEmail(string email)
         { 
-            return  await _context.Transactions.Include(c => c.TradersTransactions).Where(c => c.Status == TransactionStatus.IsCompleted && c.BuyerId == email || c.SellerId == email).ToListAsync();
+            return  await _context.Transactions.Include(d => d.TransactionTypes).Include(c => c.TradersTransactions).Where(c => c.Status == TransactionStatus.IsCompleted && c.BuyerId == email || c.SellerId == email).ToListAsync();
         }
 
         public async Task<IList<Transaction>> GetRejectedTransactionByTraderEmail(string email)
         {
-            return await _context.Transactions.Include(c => c.TradersTransactions).Where(c => c.Status == TransactionStatus.IsRejected && c.BuyerId == email || c.SellerId == email).ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).Include(c => c.TradersTransactions).Where(c => c.Status == TransactionStatus.IsRejected && c.BuyerId == email || c.SellerId == email).ToListAsync();
         }
 
         public async Task<IList<Transaction>> GetCancelledTransactionByTraderEmail(string email)
         {
-            return await _context.Transactions.Include(c => c.TradersTransactions).Where(c => c.Status == TransactionStatus.IsCancelled && c.BuyerId == email || c.SellerId == email).ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).Include(c => c.TradersTransactions).Where(c => c.Status == TransactionStatus.IsCancelled && c.BuyerId == email || c.SellerId == email).ToListAsync();
         }
 
         public async Task<IList<Transaction>> GetAllTransactionByTransactionStatus(TransactionStatus status)
         {
-            return await _context.Transactions.Where(s => s.Status == status).ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).Where(s => s.Status == status).ToListAsync();
         }
 
         public async Task<IList<Transaction>> GetAllProcessingTransaction()
         {
-            return await _context.Transactions.Where(c => c.Status == TransactionStatus.isProcessing).ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).Where(c => c.Status == TransactionStatus.isProcessing).ToListAsync();
         }
 
         public async Task<IList<Transaction>> GetAllActiveTransaction()
         {
-            var getalltransac =await _context.Transactions.Where(c => c.Status == TransactionStatus.isActive).ToListAsync();
+            var getalltransac =await _context.Transactions.Include(d => d.TransactionTypes).Where(c => c.Status == TransactionStatus.isActive).ToListAsync();
             return getalltransac;
         }
 
         public async Task<IList<Transaction>> GetAllInitiatedTransaction()
         {
-            return await _context.Transactions.Where(c => c.Status == TransactionStatus.isIntialized).ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).Where(c => c.Status == TransactionStatus.isIntialized).ToListAsync();
         }
 
         public async Task<IList<Transaction>> GetAllAgreedTransaction()
         {
-            return await _context.Transactions.Where(c => c.Status == TransactionStatus.isAgreed).ToListAsync();
+            return await _context.Transactions.Include(d => d.TransactionTypes).Where(c => c.Status == TransactionStatus.isAgreed).ToListAsync();
         }
 
         public async Task<Transaction> GetTransactionBySubtransactionReference(string subTransactionReference)
         {
-            return await _context.Transactions.SingleOrDefaultAsync(s => s.TransactionTypes.Any(c => c.Reference== subTransactionReference));
+            return await _context.Transactions.Include(d => d.TransactionTypes).SingleOrDefaultAsync(s => s.TransactionTypes.Any(c => c.Reference== subTransactionReference));
+        }
+
+        public Task<IList<Transaction>> GetAllSubTransactionByProcessingTransaction()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -19,9 +19,13 @@ namespace EscrowService.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> AddTransactions(IList<CreateTransactionTypeServiceDto> createTransactionTypeServiceDto, string TransactionType)
+        public async Task<IActionResult> AddTransactions([FromBody]CreateTransactionTypeServiceDto createTransactionTypeServiceDto)
         {
-            var result = await _transactionService.CreateTransactionType(createTransactionTypeServiceDto, TransactionType);
+            var result = await _transactionService.CreateTransactionType(createTransactionTypeServiceDto);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
             return Ok(result);
         }
         [HttpGet("GetAllTransactionTypeByTransactionReferenceNumber/{TransactionRefernceNumber}")]
@@ -70,6 +74,26 @@ namespace EscrowService.Controllers
         public async Task<IActionResult> GetDeliveredSubTransaction()
         {
             var result = await _transactionService.GetAcceptedSubTransaction();
+            if (result.IsSuccess == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPost("MakeSubTransactionDone/{transactionReferenceNumber}")]
+        public async Task<IActionResult> MakeSubTransactionDone([FromRoute]string transactionReferenceNumber)
+        {
+            var result = await _transactionService.MakeSubTransactionDone(transactionReferenceNumber);
+            if (result.IsSuccess == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpGet("GetSubTransactionByTransactionRef/{transactionReferenceNumber}")]
+        public async Task<IActionResult> GetSubTransactionByTransactionRef([FromRoute]string transactionReferenceNumber)
+        {
+            var result = await _transactionService.GetSubTransactionByTransactionRef(transactionReferenceNumber);
             if (result.IsSuccess == false)
             {
                 return BadRequest(result);

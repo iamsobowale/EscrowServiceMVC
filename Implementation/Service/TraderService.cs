@@ -191,7 +191,6 @@ namespace EscrowService.Implementation.Service
                     AccountName = trader.AccountName,
                     AccountNumber = trader.AccountNumber,
                     BankName = trader.BankName,
-                    Dob = trader.Dob,
                     Gender = trader.Gender
                 },
                 Message = "Success",
@@ -219,7 +218,6 @@ namespace EscrowService.Implementation.Service
                    AccountName = y.AccountName,
                    AccountNumber = y.AccountNumber,
                    BankName = y.BankName,
-                   Dob = y.Dob,
                }).ToList()
            };
         }
@@ -249,7 +247,6 @@ namespace EscrowService.Implementation.Service
                     AccountName = getbyEmail.AccountName,
                     AccountNumber = getbyEmail.AccountNumber,
                     BankName = getbyEmail.BankName,
-                    Dob = getbyEmail.Dob,
                     Gender = getbyEmail.Gender
                 },
                 Message = "Success",
@@ -275,7 +272,6 @@ namespace EscrowService.Implementation.Service
                     AccountName = y.Trader.AccountName,
                     AccountNumber = y.Trader.AccountNumber,
                     BankName = y.Trader.BankName,
-                    Dob = y.Trader.Dob,
                 }).ToList(),
                 Message = "Success",
                 IsSuccess = true

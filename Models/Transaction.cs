@@ -18,6 +18,7 @@ namespace EscrowService.Models
         public string ItemTitle { get; set; }
         public string ReferenceNumber { get; set; }
         public string DeliveryAddress { get; set; }
+        public DateTime DeliveryDate { get; set; }
         [EnumDataType(typeof(TransactionStatus))]
         [JsonConverter(typeof(StringEnumConverter))]
         public TransactionStatus Status { get; set; }

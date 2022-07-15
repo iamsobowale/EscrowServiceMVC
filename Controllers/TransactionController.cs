@@ -29,7 +29,7 @@ namespace EscrowService.Controllers
         [HttpPost("CreateTransaction")]
         public async Task<IActionResult> CreateTransaction([FromBody]CreateTransactionDto createTransactionDto)
         {
-            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var get =User.FindFirst(ClaimTypes.Name)?.Value;
             createTransactionDto.BuyerId = get;
             var result = await _transactionService.CreateTransaction(createTransactionDto);
             if (result==null)
@@ -69,9 +69,10 @@ namespace EscrowService.Controllers
             return Ok(result);
         }
         [HttpGet("GetAllTransactionByTraderEmail")]
-        public async Task<IActionResult> GetAllTransactionByTraderEmail(string traderEmail)
+        public async Task<IActionResult> GetAllTransactionByTraderEmail()
         {
-            var getTrader = await _traderService.GetTraderByEmailAsync(traderEmail);
+            var get =User.FindFirst(ClaimTypes.Name)?.Value;
+            var getTrader = await _traderService.GetTraderByEmailAsync(get);
             if (getTrader.IsSuccess==false)
             {
                 return BadRequest(getTrader.Message);
@@ -96,7 +97,7 @@ namespace EscrowService.Controllers
         [HttpPost("ConfirmTransaction")]
         public async Task<IActionResult> ConfirmTransaction([FromBody]string reference)
         {
-            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var get =User.FindFirst(ClaimTypes.Name)?.Value;
             var result = await _transactionService.ConFirmTransaction(reference, get);
             if (result.IsSuccess == false)
             {
@@ -108,7 +109,7 @@ namespace EscrowService.Controllers
         [HttpPost("CancelTransaction")]
         public async Task<IActionResult> CancelTransaction(string reference)
         {
-            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var get =User.FindFirst(ClaimTypes.Name)?.Value;
             var getTrader = await _traderService.GetTraderByEmailAsync(get);
             if (getTrader.IsSuccess==false)
             {
@@ -126,7 +127,7 @@ namespace EscrowService.Controllers
         [HttpPost("ProcessTrasaction")]
         public  async Task<IActionResult> ProcessTrasaction([FromBody]string reference)
         {
-            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var get =User.FindFirst(ClaimTypes.Name)?.Value;
             var getTransaction = await _transactionService.ProcessTransaction(reference, get);
             if (getTransaction.IsSuccess== false)
             {
@@ -139,7 +140,7 @@ namespace EscrowService.Controllers
         [HttpGet("GetInitiatedTransactionByTraderEmail")]
         public async Task<IActionResult> GetInitiatedTransactionByTraderEmail()
         { 
-            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var get =User.FindFirst(ClaimTypes.Name)?.Value;
             var getTransactionByTraderEmail = await _transactionService.GetInitiatedTransactionByTraderEmail(get);
             if (getTransactionByTraderEmail.IsSuccess==false)
             {
@@ -150,7 +151,7 @@ namespace EscrowService.Controllers
         [HttpPost("MakeTransactionActive")]
         public async Task<IActionResult> MakeTransactionActive(string transactionNumber)
         {
-            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var get =User.FindFirst(ClaimTypes.Name)?.Value;
             var getTrader = await _traderService.GetTraderByEmailAsync(get);
             if (getTrader.IsSuccess==false)
             {
@@ -167,7 +168,7 @@ namespace EscrowService.Controllers
         [HttpPost("ReleaseTransactionFunds")]
         public async Task<IActionResult> ReleaseTransactionFunds(string transactionNumber, string transactionTypeRef)
         {
-            var get =User.FindFirst(ClaimTypes.Name).Value;
+            var get =User.FindFirst(ClaimTypes.Name)?.Value;
             var getTrader = await _traderService.GetTraderByEmailAsync(get);
             if (getTrader.IsSuccess==false)
             {
@@ -184,7 +185,7 @@ namespace EscrowService.Controllers
         [HttpPost("CompleteTransaction")]
            public async Task<IActionResult> CompleteTransaction(string transactionNumber)
             {
-                var get =User.FindFirst(ClaimTypes.Name).Value;
+                var get =User.FindFirst(ClaimTypes.Name)?.Value;
                 var getTrader = await _traderService.GetTraderByEmailAsync(get);
                 if (getTrader.IsSuccess==false)
                 {
@@ -201,7 +202,7 @@ namespace EscrowService.Controllers
            [HttpGet("GetAllCompletedTransactionByTraderEmail")]
               public async Task<IActionResult> GetAllCompletedTransactionByTraderEmail()
               {
-                var get =User.FindFirst(ClaimTypes.Name).Value;
+                var get =User.FindFirst(ClaimTypes.Name)?.Value;
                 var getTransactionByTraderEmail = await _transactionService.GetCompletedTransactionByTraderEmail(get);
                 if (getTransactionByTraderEmail.IsSuccess==false)
                 {
@@ -213,7 +214,7 @@ namespace EscrowService.Controllers
               [HttpGet("GetActiveTransactionByTraderEmail")]
               public async Task<IActionResult> GetActiveTransactionByTraderEmail()
               {
-                  var get =User.FindFirst(ClaimTypes.Name).Value;
+                  var get =User.FindFirst(ClaimTypes.Name)?.Value;
                   var getTransactionByTraderEmail = await _transactionService.GetActiveTransactionByTraderEmail(get);
                   if (getTransactionByTraderEmail.IsSuccess==false)
                   {
@@ -226,7 +227,7 @@ namespace EscrowService.Controllers
               [HttpGet("GetAgreedTransactions")]
               public async Task<IActionResult> GetAgreedTransactions()
               {
-                  var get =User.FindFirst(ClaimTypes.Name).Value;
+                  var get =User.FindFirst(ClaimTypes.Name)?.Value;
                   var getTransaction = await _transactionService.GetAgreedTransactionByTraderEmail(get);
                   if (getTransaction.IsSuccess == false)
                   {
@@ -238,7 +239,7 @@ namespace EscrowService.Controllers
               [HttpGet("GetProcessingTransactions")]
               public async Task<IActionResult> GetProcessingTransactions()
               {
-                  var get =User.FindFirst(ClaimTypes.Name).Value;
+                  var get =User.FindFirst(ClaimTypes.Name)?.Value;
                   var getTransaction = await _transactionService.GetProcessingTransactionByTraderEmail(get);
                   if (getTransaction.IsSuccess == false)
                   {
@@ -291,5 +292,27 @@ namespace EscrowService.Controllers
 
                   return Ok(getTransaction);
               }
+                [HttpGet("GetProcessingTransactionByTraderEmailSeller")]
+                public async Task<IActionResult> GetProcessingTransactionByTraderEmailSeller()
+                {
+                    var get =User.FindFirst(ClaimTypes.Name)?.Value;
+                    var getTransactionByTraderEmail = await _transactionService.GetProcessingTransactionByTraderEmailSeller(get);
+                    if (getTransactionByTraderEmail.IsSuccess==false)
+                    {
+                        return BadRequest(getTransactionByTraderEmail.Message);
+                    }
+                    return Ok(getTransactionByTraderEmail);
+                }
+                [HttpPost("DoneTransaction")]
+                public async Task<IActionResult> DoneTransaction(string reference)
+                {
+                    var get =User.FindFirst(ClaimTypes.Name)?.Value;
+                    var result = await _transactionService.MakeTransactionDone(reference, get);
+                    if (result.IsSuccess == false)
+                    {
+                        return BadRequest(result.Message);
+                    }
+                    return Ok(result);
+                }
     }
 }

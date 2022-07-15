@@ -18,6 +18,7 @@ namespace EscrowService.Interface.Repository
         public Task<IList<Transaction>> GetAllTransactionByTransactionStatus(TransactionStatus status, string email);
         public Task<IList<Transaction>> GetInitiatedTransactionByTraderEmail(string email);
         public Task<IList<Transaction>> GetProcessingTransactionByTraderEmail(string email);
+        public Task<IList<Transaction>> GetProcessingTransactionByTraderEmailSeller(string email);
         public Task<IList<Transaction>> GetAgreedTransactionByTraderEmail(string email);
         public Task<IList<Transaction>> GetCompletedTransactionByTraderEmail(string email);
         public Task<IList<Transaction>> GetRejectedTransactionByTraderEmail(string email);
@@ -28,6 +29,7 @@ namespace EscrowService.Interface.Repository
         public Task<IList<Transaction>> GetAllInitiatedTransaction();
         public Task<IList<Transaction>> GetAllAgreedTransaction();
         public Task<Transaction> GetTransactionBySubtransactionReference(string subTransactionReference);
+        public Task<IList<Transaction>> GetAllSubTransactionByProcessingTransaction();
         
 
 

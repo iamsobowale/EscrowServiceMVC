@@ -15,8 +15,10 @@ namespace EscrowService.Interface.Repository
         Task<bool> DeleteTransactionType(int id);
         decimal GetSumAllTransactionTypeByTransactionReference(int transactionReference);
         Task<IList<TransactionType>> GetDeliveredSubTransaction(string transactionReference);
+        Task<IList<TransactionType>> GetSubTransactionByTransactionRef(string transactionReference);
         Task<IList<TransactionType>> GetAcceptedSubTransaction();
         Task<IList<TransactionType>> GetAllTransactionTypeByReferenceNumber(int transactionId);
+        
 
     }
 }

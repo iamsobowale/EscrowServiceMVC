@@ -83,6 +83,15 @@ namespace EscrowService.Implementation.Repository
             return getsubb;
         }
 
+        public async Task<IList<TransactionType>> GetSubTransactionByTransactionRef(string transactionReference)
+        {
+            
+            var getsubb =await _context.TransactionTypes.Include(d => d.Transaction).Where(c =>
+                    c.Transaction.ReferenceNumber == transactionReference && c.Transaction.Status == TransactionStatus.isProcessing && c.Status == TransactionTypeEnum.Active)
+                .ToListAsync();
+            return getsubb;
+        }
+
         public  async Task<IList<TransactionType>> GetAcceptedSubTransaction()
         {
             var getacceptedSub = await _context.TransactionTypes.Include(c => c.Transaction)

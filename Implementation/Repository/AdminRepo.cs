@@ -32,7 +32,7 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<Admin> DeleteAdminAsync(Admin admin)
         {
-            _context.Admins.Remove(admin);
+           _context.Admins.Remove(admin);
             await _context.SaveChangesAsync();
             return admin;
         }
@@ -49,7 +49,8 @@ namespace EscrowService.Implementation.Repository
 
         public async Task<Admin> GetAdminByEmailAsync(string email)
         {
-            return await _context.Admins.SingleOrDefaultAsync(c => c.Email == email);
+             var getadmin = await _context.Admins.SingleOrDefaultAsync(c => c.Email == email);
+             return getadmin;
         }
 
         public async Task<Admin> GetAdminByUserIdAsync(int userId)

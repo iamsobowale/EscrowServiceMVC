@@ -27,13 +27,13 @@ namespace EscrowService.Implementation.Service
             _transactionTypeRepo = transactionTypeRepo;
         }
 
-        public async Task<BaseResponse> CreateTransaction(CreateTransactionDto transaction)
+        public async Task<TransactionResponseModel> CreateTransaction(CreateTransactionDto transaction)
         {
-            List<TransactionType> transactionTypess = new List<TransactionType>();
+           
             var findBuyer = await _traderRepo.GetTraderByEmailAsync(transaction.BuyerId);
             if (findBuyer== null)
             {
-                return new BaseResponse
+                return new TransactionResponseModel
                 {
                     IsSuccess = false,
                     Message = "User not found"
@@ -42,7 +42,7 @@ namespace EscrowService.Implementation.Service
             var findSeller = await _traderRepo.GetTraderByEmailAsync(transaction.SellerId);
             if (findSeller == null)
             {
-                return new BaseResponse
+                return new TransactionResponseModel
                 {
                     IsSuccess = false,
                     Message = "User not found"
@@ -56,15 +56,17 @@ namespace EscrowService.Implementation.Service
                 SellerId = findSeller.Email,
                 Status = TransactionStatus.isIntialized,
                 CreatedDate = DateTime.UtcNow,
-                ItemQuantity = transaction.ItemQuantity,
                 ItemTitle = transaction.ItemTitle,
                 ReferenceNumber = generateReferencenumber,
+                TotalPrice = transaction.Price,
                 DeliveryAddress = transaction.DeliveryAddress,
+                DeliveryDate = DateTime.Now.AddDays(transaction.DeliveryDate),
+                
             };
             var createTransaction = await _transactionRepo.CreatTransaction(transactionResponse);
             if (createTransaction==null)
             {
-                return new BaseResponse()
+                return new TransactionResponseModel()
                 {
                     IsSuccess = false,
                     Message = "Transaction Failed"
@@ -82,46 +84,21 @@ namespace EscrowService.Implementation.Service
             var createjoinertable = await _transactionRepo.UpdateTransaction(transactionResponse);
             if (createjoinertable==null)
             {
-                return new BaseResponse()
+                return new TransactionResponseModel()
                 {
                     IsSuccess = false,
                     Message = "Transaction Failed"
                 };
             }
-
-            if (transaction.TransactionTypeServices.Count==5)
-            {
-                
-            }
-            foreach (var item in transaction.TransactionTypeServices)
-            {
-                var createTransactionTypes = new TransactionType()
-                {
-                    Name = item.Name,
-                    Description = item.Description,
-                    Status = TransactionTypeEnum.Active,
-                    CreatedDate = DateTime.Now,
-                    DeliveryDate = DateTime.Now.AddDays(item.DeliveryDate),
-                    TransactionId = transactionResponse.Id,
-                    Price = item.Price
-                };
-                var createTransactionType = _transactionTypeRepo.CreateTransactionType(createTransactionTypes);
-                if (createTransactionType == null)
-                {
-                    return new BaseResponse
-                    {
-                        IsSuccess = false,
-                        Message = "Transaction item failed to add"
-                    };
-                }
-            }
-            var sum = transaction.TransactionTypeServices.Sum(x => x.Price);
-            transactionResponse.TotalPrice = sum;
-            _transactionRepo.UpdateTransaction(transactionResponse); 
-            return new BaseResponse
+            return new TransactionResponseModel
             {
                 IsSuccess = true,
-                Message = "Transaction created Successfully"
+                Message = "Transaction created Successfully",
+                Transaction = new TransactionDto()
+                {
+                    reference_id = createTransaction.ReferenceNumber,
+                    TotalPrice = createTransaction.TotalPrice
+                }
             };
         }
 
@@ -220,11 +197,11 @@ namespace EscrowService.Implementation.Service
                     transaction_status = getTransaction.Status,
                     BuyerId = getTransaction.BuyerId,
                     DeliveryAddress = getTransaction.DeliveryAddress,
-                    ItemQuantity = getTransaction.ItemQuantity,
                     ItemTitle = getTransaction.ItemTitle,
                     SellerId = getTransaction.SellerId,
                     CreatedDate = getTransaction.CreatedDate,
                     TotalPrice = getTransaction.TotalPrice,
+                    numberOfSub = getTransaction.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transaction found",
                 IsSuccess = true
@@ -253,6 +230,7 @@ namespace EscrowService.Implementation.Service
                    ItemTitle = getTransaction.ItemTitle,
                    SellerId = getTransaction.SellerId,
                    CreatedDate = getTransaction.CreatedDate,
+                   numberOfSub = getTransaction.TransactionTypes.Count
                }).ToList(),
                Message = "Transaction found",
                IsSuccess = true
@@ -637,6 +615,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -676,6 +655,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -715,6 +695,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -754,6 +735,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -793,6 +775,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -832,6 +815,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -871,6 +855,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -901,6 +886,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -931,6 +917,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -961,6 +948,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -991,6 +979,7 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
@@ -1021,10 +1010,90 @@ namespace EscrowService.Implementation.Service
                     ItemTitle = x.ItemTitle,
                     SellerId = x.SellerId,
                     CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
                 }).ToList(),
                 Message = "Transactions Found",
                 IsSuccess = true
             };
+        }
+
+        public  async Task<TransactionListResponseModel> GetProcessingTransactionByTraderEmailSeller(string email)
+        {
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "Trader Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getProcessingTransaction = await _transactionRepo.GetProcessingTransactionByTraderEmailSeller(email);
+            if (getProcessingTransaction==null)
+            {
+                return new TransactionListResponseModel()
+                {
+                    Message = "No Transaction Found",
+                    IsSuccess = false
+                };
+            }
+            return new TransactionListResponseModel()
+            {
+                TransactionList = getProcessingTransaction.Select(x => new TransactionDto()
+                {
+                    reference_id = x.ReferenceNumber,
+                    transaction_status = x.Status,
+                    BuyerId = x.BuyerId,
+                    DeliveryAddress = x.DeliveryAddress,
+                    TotalPrice = x.TotalPrice,
+                    ItemQuantity = x.ItemQuantity,
+                    ItemTitle = x.ItemTitle,
+                    SellerId = x.SellerId,
+                    CreatedDate = x.CreatedDate,
+                    numberOfSub = x.TransactionTypes.Count
+                }).ToList(),
+                Message = "Transactions Found",
+                IsSuccess = true
+            };
+        }
+
+        public async Task<BaseResponse> MakeTransactionDone(string transactionId, string email)
+        {
+            var getTransaction = await _transactionRepo.GetTransactionByReferenceNumber(transactionId);
+            if (getTransaction==null)
+            {
+                return new BaseResponse()
+                {
+                    Message = "Transaction Not Found",
+                    IsSuccess = false
+                };
+            }
+            var getTrader = await _traderRepo.GetTraderByEmailAsync(email);
+            if (getTrader.Email==getTransaction.SellerId)
+            {
+                if (getTransaction.Status == TransactionStatus.isProcessing)
+                {
+                    var get = getTransaction.Status = TransactionStatus.IsDelivered;
+                    var updateTransaction = await _transactionRepo.UpdateTransaction(getTransaction);
+                    return new BaseResponse()
+                    {
+                        IsSuccess = true,
+                        Message = "Transaction Confirmed Successfully"
+                    };
+                }
+                return new BaseResponse()
+                {
+                    Message = "You Cant Confirm Transaction",
+                    IsSuccess = false
+                };
+            }
+            {
+                return new BaseResponse()
+                {
+                    Message = "You're not Allowed To Confirm As A buyer",
+                    IsSuccess = false
+                };
+            }
         }
     }
 }

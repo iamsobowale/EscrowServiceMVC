@@ -48,7 +48,7 @@ namespace EscrowService.Implementation.Service
                     PaymentMethodId = getpaymentmethod.Id,
                     PaymentDate = DateTime.UtcNow,
                     Status = PaymentStatus.Pending,
-                    ReferenceNumber = gettransaction.ReferenceNumber,
+                    ReferenceNumber = generateId,
                     Amount = SetAmount(gettransaction.TotalPrice)
                 };
                 var result = await _paymentRepo.CreatePayment(makePayment);
@@ -62,7 +62,7 @@ namespace EscrowService.Implementation.Service
                     };
                 }
 
-                using var httpClient = new HttpClient();
+                var httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Accept.Clear();
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.BaseAddress = new Uri("https://api.paystack.co/transaction/initialize");
@@ -135,7 +135,7 @@ namespace EscrowService.Implementation.Service
             var getHttpClient = new HttpClient();
             getHttpClient.DefaultRequestHeaders.Accept.Clear();
             getHttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var baseUri = getHttpClient.BaseAddress = new Uri("https://api.paystack.co/transaction/verify/" + transactionReference);
+            var baseUri = getHttpClient.BaseAddress = new Uri("https://api.paystack.co/transaction/verify/" + getTransactionReference.ReferenceNumber);
             getHttpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", "sk_test_6483775b59a2152f947af8583a987e98eb5c7af2");
             var response =
@@ -159,19 +159,19 @@ namespace EscrowService.Implementation.Service
                             return new BaseResponse
                             {
                                 IsSuccess = false,
-                                Message = "Payment Failed"
+                                Message = responseObject.message
                             };
                         }
                         return new BaseResponse
                         {
                             IsSuccess = true,
-                            Message = "Payment Verified"
+                            Message = responseObject.message
                         };
                     }
                     return new BaseResponse
                     {
                         IsSuccess = false,
-                        Message = "Payment Already Verified"
+                        Message = "Payment already verified"
                     };
                 }
             }
@@ -202,7 +202,7 @@ namespace EscrowService.Implementation.Service
             getHttpClient.DefaultRequestHeaders.Accept.Clear();
             getHttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var baseUri = getHttpClient.BaseAddress =
-                new Uri($"https://api.paystack.co/bank/resolve?account_number={getSeller.AccountNumber}&bank_code={"058"}");
+                new Uri($"https://api.paystack.co/bank/resolve?account_number={getSeller.AccountNumber}&bank_code={getSeller.BankName}");
             // "https://api.paystack.co/bank?country=nigeria"
             getHttpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", "sk_test_6483775b59a2152f947af8583a987e98eb5c7af2");
@@ -221,8 +221,10 @@ namespace EscrowService.Implementation.Service
                     };
                 }
 
-                if (responseObject.data.account_number != getSeller.AccountNumber || responseObject.data.account_name !=
-                    getSeller.LastName.ToUpper() + " " + getSeller.FirstName.ToUpper() + " " + "GANIU")
+                var splitName = responseObject.data.account_name;
+                var splitNameArray = splitName.Split(' ');
+                if (responseObject.data.account_number != getSeller.AccountNumber || splitNameArray[0] !=
+                    getSeller.LastName.ToUpper() || splitNameArray[1] != getSeller.FirstName.ToUpper())
                 {
                     return new VerifyBank()
                     {
@@ -287,7 +289,7 @@ namespace EscrowService.Implementation.Service
                 type = "nuban",
                 name = verifyBank.data.account_name,
                 account_number = verifyBank.data.account_number,
-                bank_code = "058",
+                bank_code = verifyBank.data.bank_code,
                 currency = "NGN",
             });
             var responseString = await response.Content.ReadAsStringAsync();
@@ -500,17 +502,21 @@ namespace EscrowService.Implementation.Service
             {
                 throw new Exception("Amount must be greater than 5000");
             }
-            else if (amount <=500000)
+            else if (amount <1000000)
             {
                 amount += (amount * 0.005m);
             }
-            else if (amount >= 1000000)
+            else if (amount < 1000000)
             {
                 amount += (amount * 0.003m);
             }
-            else if (amount >= 500000)
+            else if (amount < 5000000)
             {
                 amount += (amount * 0.002m);
+            }
+            else
+            {
+                amount += (amount * 0.001m);
             }
             return amount;
         }

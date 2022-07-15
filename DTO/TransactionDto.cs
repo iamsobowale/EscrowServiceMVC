@@ -17,19 +17,21 @@ namespace EscrowService.DTO
         public string BuyerId { get; set; }
         public decimal TotalPrice { get; set; }
         public string DeliveryAddress { get; set; }
+        public int DeliveryDate { get; set; }
         public string ItemTitle { get; set; }
         public string SellerId { get; set; }
         public DateTime CreatedDate { get; set; }
+        public int numberOfSub { get; set; }
         public string ItemQuantity { get; set; }
     }
     public class CreateTransactionDto
     {
+        public int DeliveryDate { get; set; }
         public string BuyerId { get; set; }
         public string DeliveryAddress { get; set; }
         public string ItemTitle { get; set; }
         public string SellerId { get; set; }
-        public string ItemQuantity { get; set; }
-        public IList<CreateTransactionTypeServiceDto> TransactionTypeServices { get; set; }
+        public decimal Price { get; set; }
     }
 
     public class UpdateTransaction

@@ -8,7 +8,7 @@ namespace EscrowService.Interface.Service
     {
         Task<TransactionTypeServiceDto> GetTransactionTypeById(int id);
         Task<TransactionTypeServiceDto> GetTransactionTypeByName(string name);
-        Task<BaseResponse> CreateTransactionType(IList<CreateTransactionTypeServiceDto> transactionType, string transactionReferenceNumber);
+        Task<BaseResponse> CreateTransactionType(CreateTransactionTypeServiceDto transactionType);
         Task<BaseResponse> UpdateTransactionType(UpdateTransactionTypeServiceDto transactionType);
         Task<bool> DeleteTransactionType(int id);
         Task<TransactionTypeListResponseModel> GetAllTransactionTypeByReferenceNumber(string transactionId);
@@ -16,5 +16,7 @@ namespace EscrowService.Interface.Service
         public Task<TransactionTypeListResponseModel> GetDeliverSubTransaction(string transactionReferenceNumber);
         public Task<BaseResponse> RejectSubTransaction(string transactionReferenceNumber);
         Task<TransactionTypeListResponseModel> GetAcceptedSubTransaction();
+        Task<BaseResponse> MakeSubTransactionDone(string transactionReferenceNumber);
+        Task<TransactionTypeListResponseModel> GetSubTransactionByTransactionRef(string transactionReference);
     }
 }
